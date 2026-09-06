@@ -12,30 +12,94 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2458ccd072b3dd64c8b74895f29c98cc, type: 3}
   m_Name: SakuEncounter
   m_EditorClassIdentifier: Assembly-CSharp::Yobitsugi.VisualNovel.VNScene
-  sceneId: 
+  sceneId: SakuEncounter
   lines:
-  - speaker: "\u30B5\u30AF"
+  - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
+    speaker: 
     text: "\u304A\u3044\u304A\u3044\u3001\u3053\u3093\u306A\u6642\u9593\u306B\u3046\u308D\u3064\u3044\u3066\u308B\u306E\u306F\u3042\u3093\u305F\u304C\u521D\u3081\u3066\u3060\u3002"
-    background: {fileID: 0}
+    background: {fileID: 21300000, guid: 6f1c27397f83fc94c94ed7092195377c, type: 3}
+    portraits:
+    - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
+      action: 0
+      slot: 0
+      expression: normal
+      transition: 0
+      emote: 0
+    - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
+      action: 0
+      slot: 4
+      expression: normal
+      transition: 0
+      emote: 0
     choices: []
-  - speaker: "\u30B5\u30AF"
-    text: "\u3053\u306E\u753A\u3001\u51FA\u53E3\u304C\u898B\u3064\u304B\u308B\u307E\u3067\u306F\u4F55\u5EA6\u3082\u540C\u3058\u5834\u6240\u306B\u623B\u3055\u308C\u308B\u3002"
+    setFlag: 
+    setFlagValue: 1
+    requiredFlag: 
+    forbiddenFlag: 
+  - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
+    speaker: 
+    text: "\u699B\u540D\u6714\u3002\u4FEE\u7406\u5C4B\u3060\u3002\u2026\u2026\u3068\u8A00\u3063\u3066\u3082\u3001\u76F4\u3059\u76F8\u624B\u304C\u3082\u3046\u3044\u306A\u3044\u3051\u3069\u306A\u3002"
     background: {fileID: 0}
+    portraits: []
     choices: []
-  - speaker: "\u30DF\u30AA"
+    setFlag: 
+    setFlagValue: 1
+    requiredFlag: 
+    forbiddenFlag: 
+  - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
+    speaker: 
+    text: "\u3053\u306E\u753A\u3001\u51FA\u53E3\u304C\u898B\u3064\u304B\u308B\u307E\u3067\u306F\u4F55\u5EA6\u3067\u3082\u540C\u3058\u5834\u6240\u306B\u623B\u3055\u308C\u308B\u3002"
+    background: {fileID: 0}
+    portraits: []
+    choices: []
+    setFlag: 
+    setFlagValue: 1
+    requiredFlag: 
+    forbiddenFlag: 
+  - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
+    speaker: 
     text: "\u2026\u2026\u3042\u306A\u305F\u3082\u3001\u9589\u3058\u8FBC\u3081\u3089\u308C\u3066\u308B\u306E?"
     background: {fileID: 0}
+    portraits:
+    - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
+      action: 4
+      slot: 2
+      expression: 
+      transition: 0
+      emote: 2
     choices:
-    - text: "\u300C\u624B\u4F1D\u3063\u3066\u304F\u308C\u308B\u306E?\u300D"
-      nextLineIndex: 3
-    - text: "\u300C\u4E00\u4EBA\u3067\u5927\u4E08\u592B\u300D"
+    - text: "\u300C\u624B\u4F1D\u3063\u3066\u304F\u308C\u308B?\u300D"
       nextLineIndex: 4
-  - speaker: "\u30B5\u30AF"
-    text: "\u624B\u304C\u304B\u308A\u30923\u3064\u96C6\u3081\u308C\u3070\u3001\u9375\u306E\u304B\u304B\u3063\u305F\u5834\u6240\u304C\u958B\u304F\u306F\u305A\u3060\u3002\u624B\u4F1D\u3046\u3088\u3002"
+      setFlag: SakuAlly
+      setFlagValue: 1
+      requiredFlag: 
+    - text: "\u300C\u3072\u3068\u308A\u3067\u5927\u4E08\u592B\u300D"
+      nextLineIndex: 5
+      setFlag: SakuRefused
+      setFlagValue: 1
+      requiredFlag: 
+    setFlag: 
+    setFlagValue: 1
+    requiredFlag: 
+    forbiddenFlag: 
+  - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
+    speaker: 
+    text: "\u59B9\u3055\u3093\u306E\u30E1\u30E2\u3092\u4E09\u3064\u96C6\u3081\u308C\u3070\u3001\u9375\u306E\u304B\u304B\u3063\u305F\u5834\u6240\u304C\u958B\u304F\u306F\u305A\u3060\u3002\u5DE5\u5177\u306F\u4EFB\u305B\u308D\u3002"
     background: {fileID: 0}
+    portraits: []
     choices: []
-  - speaker: "\u30B5\u30AF"
-    text: "\u2026\u2026\u307E\u3042\u3001\u7121\u7406\u306F\u3059\u308B\u306A\u3088\u3002\u4F55\u304B\u3042\u3063\u305F\u3089\u96A0\u308C\u308B\u5834\u6240\u304F\u3089\u3044\u306F\u6559\u3048\u3068\u304F\u3002"
+    setFlag: 
+    setFlagValue: 1
+    requiredFlag: SakuAlly
+    forbiddenFlag: 
+  - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
+    speaker: 
+    text: "\u2026\u2026\u307E\u3042\u3001\u7121\u7406\u306F\u3059\u308B\u306A\u3002\u8DB3\u97F3\u304C\u6B62\u307E\u3089\u306A\u304B\u3063\u305F\u3089\u3001\u660E\u304B\u308A\u3092\u6D88\u3057\u3066\u96A0\u308C\u308B\u3053\u3068\u3002"
     background: {fileID: 0}
+    portraits: []
     choices: []
+    setFlag: 
+    setFlagValue: 1
+    requiredFlag: 
+    forbiddenFlag: 
   nextScene: {fileID: 0}
