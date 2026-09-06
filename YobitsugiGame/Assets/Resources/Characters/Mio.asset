@@ -16,13 +16,29 @@ MonoBehaviour:
   displayName: "\u6FAA"
   nameColor: {r: 1, g: 0.46, b: 0.38, a: 1}
   expressions:
+  - sprite: {fileID: 21300000, guid: 3caf895c9390a2a4f8bc0a06df5ed879, type: 3}
+    key: angry
+  - sprite: {fileID: 21300000, guid: 371881a6bdf576448b003a54faebafea, type: 3}
+    key: embarrassed
+  - sprite: {fileID: 21300000, guid: 9c6f0cca39ab1144d9f168e981b6f25b, type: 3}
+    key: eyes_closed
   - sprite: {fileID: 21300000, guid: f8c7af00c597d7344b940b05c18ff601, type: 3}
     key: happy
   - sprite: {fileID: 21300000, guid: 568e8681edf361e478661bb6b203d2b7, type: 3}
     key: normal
+  - sprite: {fileID: 21300000, guid: 686728930c9760f46bb4c1940b8831d2, type: 3}
+    key: pose_alert
+  - sprite: {fileID: 21300000, guid: f609ad96c0f373a45a8e3a4c99ccdfac, type: 3}
+    key: pose_idle
+  - sprite: {fileID: 21300000, guid: 4c4a544cb783153488cf87bc1b663ebe, type: 3}
+    key: pose_talk
+  - sprite: {fileID: 21300000, guid: e678afd13c56b104ca0ad2173bd49564, type: 3}
+    key: sad
   - sprite: {fileID: 21300000, guid: e8d1d335dd499e9488e6538379326185, type: 3}
     key: scared
   - sprite: {fileID: 21300000, guid: d2b282bd9663446499300d3d499e3434, type: 3}
     key: smile
+  - sprite: {fileID: 21300000, guid: 38af0fbbcf12c4c4cba88b9db2f6c498, type: 3}
+    key: worried
   portraitScale: 1
   portraitOffset: {x: 0, y: 0}
