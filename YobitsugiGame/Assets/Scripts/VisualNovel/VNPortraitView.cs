@@ -36,9 +36,12 @@ namespace Yobitsugi.VisualNovel
         [SerializeField] private Image portraitTemplate;
 
         [Header("Layout")]
-        [Tooltip("Normalised horizontal positions for Left … Right slots.")]
-        [SerializeField] private float[] slotAnchors = { 0.16f, 0.32f, 0.5f, 0.68f, 0.84f };
-        [SerializeField] private Vector2 portraitSize = new Vector2(700f, 1000f);
+        [Tooltip("Normalised horizontal positions for Left … Right slots. Left/Right are the standard two-character stage.")]
+        [SerializeField] private float[] slotAnchors = { 0.26f, 0.38f, 0.5f, 0.62f, 0.74f };
+        [Tooltip("Portrait box in reference-resolution pixels; art keeps its aspect inside it.")]
+        [SerializeField] private Vector2 portraitSize = new Vector2(820f, 1180f);
+        [Tooltip("Vertical offset so portraits sit slightly below the screen edge, as novel games usually crop them.")]
+        [SerializeField] private float baseOffsetY = -60f;
 
         [Header("Animation")]
         [SerializeField] private float enterDuration = 0.35f;
@@ -50,9 +53,11 @@ namespace Yobitsugi.VisualNovel
 
         [Header("Speaker highlight")]
         [SerializeField] private Color speakingTint = Color.white;
-        [SerializeField] private Color idleTint = new Color(0.55f, 0.55f, 0.62f, 1f);
+        [Tooltip("Non-speaking characters are dimmed to this tint — they stay on stage, just darker.")]
+        [SerializeField] private Color idleTint = new Color(0.5f, 0.5f, 0.58f, 1f);
         [SerializeField] private float speakingScale = 1f;
-        [SerializeField] private float idleScale = 0.97f;
+        [Tooltip("Keep at 1 so dimmed characters darken without shifting size.")]
+        [SerializeField] private float idleScale = 1f;
         [SerializeField] private float highlightDuration = 0.25f;
 
         private readonly Dictionary<CharacterDefinition, StagedPortrait> staged =
@@ -288,7 +293,7 @@ namespace Yobitsugi.VisualNovel
             rect.anchorMin = new Vector2(anchorX, 0f);
             rect.anchorMax = new Vector2(anchorX, 0f);
             rect.pivot = new Vector2(0.5f, 0f);
-            rect.anchoredPosition = character.portraitOffset;
+            rect.anchoredPosition = character.portraitOffset + new Vector2(0f, baseOffsetY);
             rect.localScale = Vector3.one * character.portraitScale;
         }
     }

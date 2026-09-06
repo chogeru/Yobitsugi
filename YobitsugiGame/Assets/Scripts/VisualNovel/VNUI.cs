@@ -115,6 +115,9 @@ namespace Yobitsugi.VisualNovel
             backgroundFadeImage.color = Color.white;
             backgroundImage.sprite = sprite;
 
+            // The empty-state panel is tinted near-black; a sprite must render untinted or it comes out invisible.
+            backgroundImage.color = Color.white;
+
             backgroundFadeImage.DOFade(0f, backgroundCrossfade)
                 .OnComplete(() => backgroundFadeImage.enabled = false)
                 .SetLink(gameObject);

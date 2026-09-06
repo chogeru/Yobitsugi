@@ -345,7 +345,14 @@ public static class YobitsugiSceneBuilder
         var canvas = canvasGO.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = sortingOrder;
-        canvasGO.AddComponent<CanvasScaler>();
+
+        // Scale with the screen so portrait and text layout hold up at any resolution.
+        var scaler = canvasGO.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 1f;
+
         canvasGO.AddComponent<GraphicRaycaster>();
         return canvasGO;
     }
@@ -394,12 +401,12 @@ public static class YobitsugiSceneBuilder
     private static Button CreateButton(string name, Transform parent, string label, Vector2 anchoredPos)
     {
         var go = CreateUIObject(name, parent);
-        AddRect(go, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), anchoredPos, new Vector2(220f, 56f));
+        AddRect(go, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), anchoredPos, new Vector2(280f, 64f));
         var img = go.AddComponent<Image>();
         img.color = new Color(1f, 1f, 1f, 0.15f);
         var btn = go.AddComponent<Button>();
         CreateText(name + "Label", go.transform, label, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
-            22, TextAnchor.MiddleCenter);
+            28, TextAnchor.MiddleCenter);
         return btn;
     }
 
@@ -420,6 +427,8 @@ public static class YobitsugiSceneBuilder
     {
         // The canvas is a prefab: its layout and styling are the designer's, the wiring below is the scene's.
         var canvasGO = GetOrCreatePrefabInstance("VN Canvas", uiRoot, ConstructVNCanvas);
+        WireVNCanvas(canvasGO);
+
         var vnUi = canvasGO.GetComponent<VNUI>();
         var portraitView = canvasGO.GetComponentInChildren<VNPortraitView>(true);
 
@@ -502,28 +511,29 @@ public static class YobitsugiSceneBuilder
         var advanceBtn = advanceButton.AddComponent<Button>();
 
         var textPanel = CreateUIObject("TextPanel", canvasGO.transform);
-        AddRect(textPanel, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 140f), new Vector2(-80f, 240f));
-        textPanel.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.65f);
+        AddRect(textPanel, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(-160f, 300f));
+        textPanel.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.72f);
         var textPanelGroup = textPanel.AddComponent<CanvasGroup>();
 
         var speakerText = CreateText("SpeakerText", textPanel.transform, "",
-            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(24f, -12f), new Vector2(-48f, 36f),
-            22, TextAnchor.UpperLeft);
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(40f, -18f), new Vector2(-80f, 44f),
+            30, TextAnchor.UpperLeft);
         speakerText.fontStyle = FontStyle.Bold;
 
         var dialogueText = CreateText("DialogueText", textPanel.transform, "",
-            Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), new Vector2(0f, -14f), new Vector2(-48f, -50f),
-            24, TextAnchor.UpperLeft);
+            Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), new Vector2(0f, -22f), new Vector2(-80f, -76f),
+            34, TextAnchor.UpperLeft);
+        dialogueText.lineSpacing = 1.25f;
 
         var nextIndicator = CreateText("NextIndicator", textPanel.transform, "▼",
-            new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-24f, 16f), new Vector2(32f, 32f),
-            22, TextAnchor.MiddleCenter);
+            new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 20f), new Vector2(40f, 40f),
+            26, TextAnchor.MiddleCenter);
         nextIndicator.raycastTarget = false;
         nextIndicator.gameObject.AddComponent<BlinkGraphic>();
         nextIndicator.gameObject.SetActive(false);
 
         var choicesContainer = CreateUIObject("ChoicesContainer", canvasGO.transform);
-        AddRect(choicesContainer, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 260f), new Vector2(640f, 220f));
+        AddRect(choicesContainer, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 420f), new Vector2(900f, 260f));
         var layout = choicesContainer.AddComponent<VerticalLayoutGroup>();
         layout.childAlignment = TextAnchor.LowerCenter;
         layout.spacing = 10f;
@@ -531,6 +541,10 @@ public static class YobitsugiSceneBuilder
         layout.childControlHeight = false;
 
         var choiceTemplate = CreateButton("ChoiceButtonTemplate", choicesContainer.transform, "選択肢", Vector2.zero);
+        AddRect(choiceTemplate.gameObject, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            Vector2.zero, new Vector2(760f, 76f));
+        choiceTemplate.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.62f);
+        choiceTemplate.GetComponentInChildren<Text>().fontSize = 30;
         choiceTemplate.gameObject.SetActive(false);
 
         var vnUi = canvasGO.AddComponent<VNUI>();
@@ -549,6 +563,39 @@ public static class YobitsugiSceneBuilder
         vnUiSO.ApplyModifiedPropertiesWithoutUndo();
 
         return canvasGO;
+    }
+
+    /// <summary>
+    /// Re-points the view components at the children of <paramref name="canvas"/>.
+    /// Run on every build: a reference stored before the prefab existed can otherwise still address the
+    /// asset's copy, which fails at runtime ("cannot instantiate with a persistent parent").
+    /// </summary>
+    private static void WireVNCanvas(GameObject canvas)
+    {
+        var vnUi = canvas.GetComponent<VNUI>();
+        var stage = canvas.transform.Find("PortraitStage");
+        var textPanel = canvas.transform.Find("TextPanel");
+
+        var so = new SerializedObject(vnUi);
+        so.FindProperty("root").objectReferenceValue = canvas;
+        so.FindProperty("backgroundImage").objectReferenceValue = canvas.transform.Find("Background").GetComponent<Image>();
+        so.FindProperty("backgroundFadeImage").objectReferenceValue = canvas.transform.Find("BackgroundFade").GetComponent<Image>();
+        so.FindProperty("textPanelGroup").objectReferenceValue = textPanel.GetComponent<CanvasGroup>();
+        so.FindProperty("speakerText").objectReferenceValue = textPanel.Find("SpeakerText").GetComponent<Text>();
+        so.FindProperty("dialogueText").objectReferenceValue = textPanel.Find("DialogueText").GetComponent<Text>();
+        so.FindProperty("advanceButton").objectReferenceValue = canvas.transform.Find("AdvanceButton").GetComponent<Button>();
+        so.FindProperty("nextIndicator").objectReferenceValue = textPanel.Find("NextIndicator").gameObject;
+        so.FindProperty("choicesContainer").objectReferenceValue = canvas.transform.Find("ChoicesContainer");
+        so.FindProperty("choiceButtonTemplate").objectReferenceValue =
+            canvas.transform.Find("ChoicesContainer/ChoiceButtonTemplate").GetComponent<Button>();
+        so.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        var portraitView = stage.GetComponent<VNPortraitView>();
+        var portraitSO = new SerializedObject(portraitView);
+        portraitSO.FindProperty("stage").objectReferenceValue = stage.GetComponent<RectTransform>();
+        portraitSO.FindProperty("portraitTemplate").objectReferenceValue = stage.Find("PortraitTemplate").GetComponent<Image>();
+        portraitSO.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static void BuildVNTrigger(string name, Vector3 position, Vector3 size, VNScene scene)
@@ -613,10 +660,54 @@ public static class YobitsugiSceneBuilder
         var canvasGO = GetOrCreatePrefabInstance("System Menu Canvas", uiRoot, ConstructSystemMenuCanvas);
 
         var systemMenu = canvasGO.GetComponent<SystemMenuView>();
+        var menuPanel = canvasGO.transform.Find("MenuPanel");
+        var buttons = menuPanel.Find("Buttons");
+        var backlogPanel = canvasGO.transform.Find("BacklogPanel");
+        var slotPanel = canvasGO.transform.Find("SlotPanel");
+        var slotList = slotPanel.Find("SlotButtons");
+
         var so = new SerializedObject(systemMenu);
+        so.FindProperty("menuPanel").objectReferenceValue = menuPanel.gameObject;
+        so.FindProperty("backlogPanel").objectReferenceValue = backlogPanel.gameObject;
+        so.FindProperty("slotPanel").objectReferenceValue = slotPanel.gameObject;
+        so.FindProperty("menuButton").objectReferenceValue = canvasGO.transform.Find("MenuButton").GetComponent<Button>();
+        so.FindProperty("autoButton").objectReferenceValue = buttons.Find("AutoButton").GetComponent<Button>();
+        so.FindProperty("skipButton").objectReferenceValue = buttons.Find("SkipButton").GetComponent<Button>();
+        so.FindProperty("backlogButton").objectReferenceValue = buttons.Find("LogButton").GetComponent<Button>();
+        so.FindProperty("saveButton").objectReferenceValue = buttons.Find("SaveButton").GetComponent<Button>();
+        so.FindProperty("loadButton").objectReferenceValue = buttons.Find("LoadButton").GetComponent<Button>();
+        so.FindProperty("restartButton").objectReferenceValue = buttons.Find("RestartButton").GetComponent<Button>();
+        so.FindProperty("autoButtonLabel").objectReferenceValue = buttons.Find("AutoButton").GetComponentInChildren<Text>();
+        so.FindProperty("skipButtonLabel").objectReferenceValue = buttons.Find("SkipButton").GetComponentInChildren<Text>();
+        so.FindProperty("backlogText").objectReferenceValue = backlogPanel.Find("BacklogText").GetComponent<Text>();
+        so.FindProperty("slotPanelTitle").objectReferenceValue = slotPanel.Find("SlotPanelTitle").GetComponent<Text>();
+        so.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
         so.FindProperty("vnManager").objectReferenceValue = vnManager;
         so.FindProperty("gameModeManager").objectReferenceValue = gameModeManager;
         so.FindProperty("saveCoordinator").objectReferenceValue = saveCoordinator;
+
+        var backButtons = new[]
+        {
+            buttons.Find("CloseButton").GetComponent<Button>(),
+            backlogPanel.Find("CloseBacklogButton").GetComponent<Button>(),
+            slotList.Find("CloseSlotButton").GetComponent<Button>(),
+        };
+        var backProp = so.FindProperty("backButtons");
+        backProp.arraySize = backButtons.Length;
+        for (int i = 0; i < backButtons.Length; i++)
+            backProp.GetArrayElementAtIndex(i).objectReferenceValue = backButtons[i];
+
+        var slotProp = so.FindProperty("slotButtons");
+        var labelProp = so.FindProperty("slotButtonLabels");
+        slotProp.arraySize = SaveSystem.SlotCount;
+        labelProp.arraySize = SaveSystem.SlotCount;
+        for (int i = 0; i < SaveSystem.SlotCount; i++)
+        {
+            var slotButton = slotList.Find($"SlotButton_{i}").GetComponent<Button>();
+            slotProp.GetArrayElementAtIndex(i).objectReferenceValue = slotButton;
+            labelProp.GetArrayElementAtIndex(i).objectReferenceValue = slotButton.GetComponentInChildren<Text>();
+        }
+
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 

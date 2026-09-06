@@ -21,7 +21,7 @@ MonoBehaviour:
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 0
-      slot: 2
+      slot: 0
       expression: normal
       transition: 0
       emote: 0
