@@ -25,6 +25,7 @@ namespace Yobitsugi.Audio
         [SerializeField] private AudioSource musicSource;
         [SerializeField] private AudioSource ambienceSource;
         [SerializeField] private AudioSource sfxSource;
+        [SerializeField] private AudioSource voiceSource;
 
         [Header("Music")]
         [SerializeField] private AudioClip vnMusic;
@@ -39,10 +40,16 @@ namespace Yobitsugi.Audio
         [SerializeField] private AudioClip saveClip;
         [SerializeField, Range(0f, 1f)] private float sfxVolume = 0.7f;
 
+        [Header("Voice")]
+        [SerializeField, Range(0f, 1f)] private float voiceVolume = 1f;
+        [Tooltip("Duck music and ambience by this factor while a line is voiced.")]
+        [SerializeField, Range(0f, 1f)] private float voiceDucking = 0.5f;
+
         private void OnEnable()
         {
             GameEvents.OnModeChanged += HandleModeChanged;
             GameEvents.OnVNLineShown += HandleLineShown;
+            GameEvents.OnVoiceRequested += HandleVoiceRequested;
             GameEvents.OnClueCollected += HandleClueCollected;
             GameEvents.OnSaveCompleted += HandleSaveCompleted;
         }
@@ -51,8 +58,42 @@ namespace Yobitsugi.Audio
         {
             GameEvents.OnModeChanged -= HandleModeChanged;
             GameEvents.OnVNLineShown -= HandleLineShown;
+            GameEvents.OnVoiceRequested -= HandleVoiceRequested;
             GameEvents.OnClueCollected -= HandleClueCollected;
             GameEvents.OnSaveCompleted -= HandleSaveCompleted;
+        }
+
+        /// <summary>Plays a line's voice, cutting the previous take. A null clip just stops playback.</summary>
+        private void HandleVoiceRequested(AudioClip clip)
+        {
+            if (voiceSource == null) return;
+
+            voiceSource.Stop();
+            voiceSource.clip = clip;
+
+            if (clip != null)
+            {
+                voiceSource.volume = voiceVolume;
+                voiceSource.Play();
+            }
+
+            ApplyDucking(clip != null);
+        }
+
+        private void ApplyDucking(bool voicePlaying)
+        {
+            float factor = voicePlaying ? voiceDucking : 1f;
+
+            DuckSource(musicSource, musicVolume * factor);
+            DuckSource(ambienceSource, ambienceVolume * factor);
+        }
+
+        private void DuckSource(AudioSource source, float target)
+        {
+            if (source == null || !source.isPlaying) return;
+
+            DOTween.Kill(source, complete: false);
+            source.DOFade(target, 0.25f).SetTarget(source).SetLink(gameObject);
         }
 
         private void HandleModeChanged(bool isInVN)

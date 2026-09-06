@@ -11,9 +11,11 @@ namespace Yobitsugi.VisualNovel
     {
         public const string CharactersFolder = "Characters";
         public const string BackgroundsFolder = "Backgrounds";
+        public const string VoicesFolder = "Voices";
 
         private static Dictionary<string, CharacterDefinition> characters;
         private static Dictionary<string, Sprite> backgrounds;
+        private static Dictionary<string, AudioClip> voices;
 
         public static CharacterDefinition FindCharacter(string characterId)
         {
@@ -31,6 +33,21 @@ namespace Yobitsugi.VisualNovel
             return backgrounds.TryGetValue(backgroundId, out var sprite) ? sprite : null;
         }
 
+        /// <summary>Voice clips are addressed by file name, e.g. "Intro_000_Mio".</summary>
+        public static AudioClip FindVoice(string voiceId)
+        {
+            if (string.IsNullOrEmpty(voiceId)) return null;
+
+            if (voices == null)
+            {
+                voices = new Dictionary<string, AudioClip>();
+                foreach (var clip in Resources.LoadAll<AudioClip>(VoicesFolder))
+                    voices[clip.name] = clip;
+            }
+
+            return voices.TryGetValue(voiceId, out var voice) ? voice : null;
+        }
+
         public static IReadOnlyCollection<CharacterDefinition> AllCharacters()
         {
             EnsureCharacters();
@@ -42,6 +59,7 @@ namespace Yobitsugi.VisualNovel
         {
             characters = null;
             backgrounds = null;
+            voices = null;
         }
 
         private static void EnsureCharacters()

@@ -61,6 +61,12 @@ namespace Yobitsugi.VisualNovel
 #endif
         public Sprite background;
 
+        [Tooltip("Optional voice clip played when this line appears. In auto mode the line waits for it to finish.")]
+#if ODIN_INSPECTOR
+        [HorizontalGroup("bg"), LabelText("ボイス"), LabelWidth(50)]
+#endif
+        public AudioClip voice;
+
         [Tooltip("Stage directions applied before this line is shown.")]
 #if ODIN_INSPECTOR
         [ListDrawerSettings(DefaultExpandedState = true), LabelText("立ち絵")]

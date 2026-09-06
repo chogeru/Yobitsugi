@@ -17,7 +17,7 @@ public static class ScenarioCsvTool
 
     private static readonly string[] Header =
     {
-        "index", "characterId", "speaker", "text", "backgroundId",
+        "index", "characterId", "speaker", "text", "backgroundId", "voiceId",
         "setFlag", "setFlagValue", "requiredFlag", "forbiddenFlag",
         "choice1Text", "choice1Next", "choice1Flag",
         "choice2Text", "choice2Next", "choice2Flag",
@@ -52,6 +52,7 @@ public static class ScenarioCsvTool
                 line.speaker ?? "",
                 line.text ?? "",
                 line.background != null ? line.background.name : "",
+                line.voice != null ? line.voice.name : "",
                 line.setFlag ?? "",
                 line.setFlagValue.ToString(),
                 line.requiredFlag ?? "",
@@ -104,15 +105,16 @@ public static class ScenarioCsvTool
                 speaker = Field(row, 2),
                 text = Field(row, 3),
                 background = VNAssetLibrary.FindBackground(Field(row, 4)),
-                setFlag = Field(row, 5),
-                setFlagValue = ParseInt(Field(row, 6), 1),
-                requiredFlag = Field(row, 7),
-                forbiddenFlag = Field(row, 8),
+                voice = VNAssetLibrary.FindVoice(Field(row, 5)),
+                setFlag = Field(row, 6),
+                setFlagValue = ParseInt(Field(row, 7), 1),
+                requiredFlag = Field(row, 8),
+                forbiddenFlag = Field(row, 9),
             };
 
             var choices = new List<VNChoice>();
-            AddChoice(choices, Field(row, 9), Field(row, 10), Field(row, 11));
-            AddChoice(choices, Field(row, 12), Field(row, 13), Field(row, 14));
+            AddChoice(choices, Field(row, 10), Field(row, 11), Field(row, 12));
+            AddChoice(choices, Field(row, 13), Field(row, 14), Field(row, 15));
             if (choices.Count > 0) line.choices = choices.ToArray();
 
             lines.Add(line);

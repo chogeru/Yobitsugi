@@ -623,12 +623,14 @@ public static class YobitsugiSceneBuilder
         var music = CreateAudioSource(audioGO.transform, "Music");
         var ambience = CreateAudioSource(audioGO.transform, "Ambience");
         var sfx = CreateAudioSource(audioGO.transform, "SFX");
+        var voice = CreateAudioSource(audioGO.transform, "Voice");
 
         var service = audioGO.AddComponent<Yobitsugi.Audio.AudioService>();
         var so = new SerializedObject(service);
         so.FindProperty("musicSource").objectReferenceValue = music;
         so.FindProperty("ambienceSource").objectReferenceValue = ambience;
         so.FindProperty("sfxSource").objectReferenceValue = sfx;
+        so.FindProperty("voiceSource").objectReferenceValue = voice;
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 

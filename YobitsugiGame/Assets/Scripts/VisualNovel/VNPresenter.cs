@@ -12,6 +12,9 @@ namespace Yobitsugi.VisualNovel
         public float charInterval = 0.03f;
         public float autoAdvanceDelay = 1.2f;
         public float skipAdvanceDelay = 0.05f;
+
+        [Tooltip("Extra pause after a voice clip ends before auto mode advances.")]
+        public float voiceTailSeconds = 0.4f;
     }
 
     /// <summary>
@@ -62,6 +65,7 @@ namespace Yobitsugi.VisualNovel
         public void HideUI()
         {
             KillTweens();
+            GameEvents.RaiseVoiceRequested(null);
             portraits?.ClearAll(true);
             view.SetVisible(false);
         }
@@ -252,6 +256,9 @@ namespace Yobitsugi.VisualNovel
 
             GameEvents.RaiseVNLineShown(line.SpeakerName, line.text);
 
+            // Skip mode races past lines, so voice would only ever be cut off mid-word.
+            GameEvents.RaiseVoiceRequested(SkipMode ? null : line.voice);
+
             KillTweens();
 
             string text = line.text ?? string.Empty;
@@ -307,9 +314,16 @@ namespace Yobitsugi.VisualNovel
             if (currentScene == null || isTyping || AwaitingChoice) return;
 
             if (AutoMode)
-                autoTween = DOVirtual.DelayedCall(pacing.autoAdvanceDelay, Advance);
+                autoTween = DOVirtual.DelayedCall(AutoDelayFor(currentScene.lines[lineIndex]), Advance);
             else if (SkipMode)
                 autoTween = DOVirtual.DelayedCall(pacing.skipAdvanceDelay, Advance);
+        }
+
+        /// <summary>A voiced line holds until the take finishes, so auto mode never talks over itself.</summary>
+        private float AutoDelayFor(VNLine line)
+        {
+            if (line.voice == null) return pacing.autoAdvanceDelay;
+            return Mathf.Max(pacing.autoAdvanceDelay, line.voice.length + pacing.voiceTailSeconds);
         }
 
         private void KillTweens()
