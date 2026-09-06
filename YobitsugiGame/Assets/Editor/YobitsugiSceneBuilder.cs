@@ -23,6 +23,7 @@ public static class YobitsugiSceneBuilder
     private const string InputActionsPath = "Assets/InputSystem_Actions.inputactions";
     private const string VNScenesFolder = "Assets/Resources/VNScenes";
     private const string VolumeProfilePath = "Assets/Settings/YobitsugiVolumeProfile.asset";
+    private const string PrefabFolder = "Assets/Prefabs";
     private const int RequiredClueCount = 3;
 
     private static Transform systemsRoot;
@@ -57,7 +58,8 @@ public static class YobitsugiSceneBuilder
 
         BuildLighting();
         BuildEnvironment();
-        var player = BuildPlayer();
+        var player = GetOrCreatePrefabInstance("Player", actorsRoot, BuildPlayer);
+        player.transform.position = new Vector3(0f, 0.1f, -3f);
         BuildClues();
         var hudCanvas = BuildGameManagerAndUI(player);
         BuildVisualNovel(player, hudCanvas);
@@ -72,6 +74,28 @@ public static class YobitsugiSceneBuilder
     }
 
     private static Transform CreateGroup(string name) => new GameObject(name).transform;
+
+    /// <summary>
+    /// Returns a scene instance of <paramref name="name"/>: from the prefab when one exists (so hand-tuning it
+    /// survives rebuilds), otherwise built from code and saved as the prefab for next time.
+    /// </summary>
+    private static GameObject GetOrCreatePrefabInstance(string name, Transform parent, System.Func<GameObject> construct)
+    {
+        System.IO.Directory.CreateDirectory(PrefabFolder);
+        string path = $"{PrefabFolder}/{name}.prefab";
+
+        var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (existing != null)
+        {
+            var fromPrefab = (GameObject)PrefabUtility.InstantiatePrefab(existing);
+            fromPrefab.transform.SetParent(parent, false);
+            return fromPrefab;
+        }
+
+        var built = construct();
+        var connected = PrefabUtility.SaveAsPrefabAssetAndConnect(built, path, InteractionMode.AutomatedAction);
+        return connected;
+    }
 
     private static void RegisterInBuildSettings()
     {
@@ -394,6 +418,56 @@ public static class YobitsugiSceneBuilder
 
     private static void BuildVisualNovel(GameObject player, GameObject hudCanvas)
     {
+        // The canvas is a prefab: its layout and styling are the designer's, the wiring below is the scene's.
+        var canvasGO = GetOrCreatePrefabInstance("VN Canvas", uiRoot, ConstructVNCanvas);
+        var vnUi = canvasGO.GetComponent<VNUI>();
+        var portraitView = canvasGO.GetComponentInChildren<VNPortraitView>(true);
+
+        var vnManagerGO = new GameObject("VNManager");
+        vnManagerGO.transform.SetParent(systemsRoot, false);
+        var vnManager = vnManagerGO.AddComponent<VNManager>();
+        var vnManagerSO = new SerializedObject(vnManager);
+        vnManagerSO.FindProperty("view").objectReferenceValue = vnUi;
+        vnManagerSO.FindProperty("portraitView").objectReferenceValue = portraitView;
+        vnManagerSO.ApplyModifiedPropertiesWithoutUndo();
+
+        var introScene = EnsureVNScene("Intro");
+        var sakuScene = EnsureVNScene("SakuEncounter");
+
+        var gameModeGO = new GameObject("GameModeManager");
+        gameModeGO.transform.SetParent(systemsRoot, false);
+        var gameMode = gameModeGO.AddComponent<GameModeManager>();
+        var gameModeSO = new SerializedObject(gameMode);
+        gameModeSO.FindProperty("player").objectReferenceValue = player.GetComponent<PlayerController>();
+        gameModeSO.FindProperty("vnManager").objectReferenceValue = vnManager;
+        gameModeSO.FindProperty("introScene").objectReferenceValue = introScene;
+        gameModeSO.ApplyModifiedPropertiesWithoutUndo();
+
+        // HUD visibility follows the mode through events instead of a reference held by GameModeManager.
+        var hudVisibility = gameModeGO.AddComponent<ModeVisibility>();
+        var hudVisibilitySO = new SerializedObject(hudVisibility);
+        hudVisibilitySO.FindProperty("target").objectReferenceValue = hudCanvas;
+        hudVisibilitySO.FindProperty("visibleInVN").boolValue = false;
+        hudVisibilitySO.FindProperty("visibleInExploration").boolValue = true;
+        hudVisibilitySO.ApplyModifiedPropertiesWithoutUndo();
+
+        var flagsGO = new GameObject("StoryFlags");
+        flagsGO.transform.SetParent(systemsRoot, false);
+        flagsGO.AddComponent<StoryFlags>();
+
+        var saveCoordinatorGO = new GameObject("SaveCoordinator");
+        saveCoordinatorGO.transform.SetParent(systemsRoot, false);
+        var saveCoordinator = saveCoordinatorGO.AddComponent<SaveCoordinator>();
+
+        BuildAudioService();
+
+        BuildVNTrigger("VNTrigger_SakuEncounter", new Vector3(0f, 1.2f, 14f), new Vector3(6f, 3f, 3f), sakuScene);
+        BuildSystemMenu(vnManager, gameMode, saveCoordinator);
+        BuildScreenFader();
+    }
+
+    private static GameObject ConstructVNCanvas()
+    {
         var canvasGO = CreateCanvas("VN Canvas", 10);
 
         var background = CreateFullScreenPanel("Background", canvasGO.transform, new Color(0.05f, 0.05f, 0.07f, 1f));
@@ -415,9 +489,8 @@ public static class YobitsugiSceneBuilder
         portraitImage.raycastTarget = false;
         portraitTemplate.SetActive(false);
 
-        var portraitViewGO = new GameObject("VNPortraitView");
-        portraitViewGO.transform.SetParent(systemsRoot, false);
-        var portraitView = portraitViewGO.AddComponent<VNPortraitView>();
+        // The view lives on the stage object itself so the whole canvas can be extracted as a self-contained prefab.
+        var portraitView = stage.AddComponent<VNPortraitView>();
         var portraitSO = new SerializedObject(portraitView);
         portraitSO.FindProperty("stage").objectReferenceValue = stage.GetComponent<RectTransform>();
         portraitSO.FindProperty("portraitTemplate").objectReferenceValue = portraitImage;
@@ -460,9 +533,7 @@ public static class YobitsugiSceneBuilder
         var choiceTemplate = CreateButton("ChoiceButtonTemplate", choicesContainer.transform, "選択肢", Vector2.zero);
         choiceTemplate.gameObject.SetActive(false);
 
-        var vnUiGO = new GameObject("VNView");
-        vnUiGO.transform.SetParent(systemsRoot, false);
-        var vnUi = vnUiGO.AddComponent<VNUI>();
+        var vnUi = canvasGO.AddComponent<VNUI>();
         var vnUiSO = new SerializedObject(vnUi);
         vnUiSO.FindProperty("root").objectReferenceValue = canvasGO;
         vnUiSO.FindProperty("backgroundImage").objectReferenceValue = backgroundImage;
@@ -477,64 +548,7 @@ public static class YobitsugiSceneBuilder
         vnUiSO.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
         vnUiSO.ApplyModifiedPropertiesWithoutUndo();
 
-        var vnManagerGO = new GameObject("VNManager");
-        vnManagerGO.transform.SetParent(systemsRoot, false);
-        var vnManager = vnManagerGO.AddComponent<VNManager>();
-        var vnManagerSO = new SerializedObject(vnManager);
-        vnManagerSO.FindProperty("view").objectReferenceValue = vnUi;
-        vnManagerSO.FindProperty("portraitView").objectReferenceValue = portraitView;
-        vnManagerSO.ApplyModifiedPropertiesWithoutUndo();
-
-        var introScene = EnsureVNScene("Intro", () => new[]
-        {
-            NewLine("ミオ", "……ここ、本当にナギが写真を送ってきた駅?"),
-            NewLine("ミオ", "誰もいない。なのに電気は点いてるし、信号機も動いてる。"),
-            NewLine("ミオ", "とにかく、手がかりを探さないと。"),
-        });
-
-        var sakuScene = EnsureVNScene("SakuEncounter", () => new[]
-        {
-            NewLine("サク", "おいおい、こんな時間にうろついてるのはあんたが初めてだ。"),
-            NewLine("サク", "この町、出口が見つかるまでは何度も同じ場所に戻される。"),
-            NewLine("ミオ", "……あなたも、閉じ込められてるの?", new[]
-            {
-                new VNChoice { text = "「手伝ってくれるの?」", nextLineIndex = 3 },
-                new VNChoice { text = "「一人で大丈夫」", nextLineIndex = 4 },
-            }),
-            NewLine("サク", "手がかりを3つ集めれば、鍵のかかった場所が開くはずだ。手伝うよ。"),
-            NewLine("サク", "……まあ、無理はするなよ。何かあったら隠れる場所くらいは教えとく。"),
-        });
-
-        var gameModeGO = new GameObject("GameModeManager");
-        gameModeGO.transform.SetParent(systemsRoot, false);
-        var gameMode = gameModeGO.AddComponent<GameModeManager>();
-        var gameModeSO = new SerializedObject(gameMode);
-        gameModeSO.FindProperty("player").objectReferenceValue = player.GetComponent<PlayerController>();
-        gameModeSO.FindProperty("vnManager").objectReferenceValue = vnManager;
-        gameModeSO.FindProperty("introScene").objectReferenceValue = introScene;
-        gameModeSO.ApplyModifiedPropertiesWithoutUndo();
-
-        // HUD visibility follows the mode through events instead of a reference held by GameModeManager.
-        var hudVisibility = gameModeGO.AddComponent<ModeVisibility>();
-        var hudVisibilitySO = new SerializedObject(hudVisibility);
-        hudVisibilitySO.FindProperty("target").objectReferenceValue = hudCanvas;
-        hudVisibilitySO.FindProperty("visibleInVN").boolValue = false;
-        hudVisibilitySO.FindProperty("visibleInExploration").boolValue = true;
-        hudVisibilitySO.ApplyModifiedPropertiesWithoutUndo();
-
-        var flagsGO = new GameObject("StoryFlags");
-        flagsGO.transform.SetParent(systemsRoot, false);
-        flagsGO.AddComponent<StoryFlags>();
-
-        var saveCoordinatorGO = new GameObject("SaveCoordinator");
-        saveCoordinatorGO.transform.SetParent(systemsRoot, false);
-        var saveCoordinator = saveCoordinatorGO.AddComponent<SaveCoordinator>();
-
-        BuildAudioService();
-
-        BuildVNTrigger("VNTrigger_SakuEncounter", new Vector3(0f, 1.2f, 14f), new Vector3(6f, 3f, 3f), sakuScene);
-        BuildSystemMenu(vnManager, gameMode, saveCoordinator);
-        BuildScreenFader();
+        return canvasGO;
     }
 
     private static void BuildVNTrigger(string name, Vector3 position, Vector3 size, VNScene scene)
@@ -596,6 +610,18 @@ public static class YobitsugiSceneBuilder
 
     private static void BuildSystemMenu(VNManager vnManager, GameModeManager gameModeManager, SaveCoordinator saveCoordinator)
     {
+        var canvasGO = GetOrCreatePrefabInstance("System Menu Canvas", uiRoot, ConstructSystemMenuCanvas);
+
+        var systemMenu = canvasGO.GetComponent<SystemMenuView>();
+        var so = new SerializedObject(systemMenu);
+        so.FindProperty("vnManager").objectReferenceValue = vnManager;
+        so.FindProperty("gameModeManager").objectReferenceValue = gameModeManager;
+        so.FindProperty("saveCoordinator").objectReferenceValue = saveCoordinator;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static GameObject ConstructSystemMenuCanvas()
+    {
         var canvasGO = CreateCanvas("System Menu Canvas", 20);
 
         var menuButton = CreateButton("MenuButton", canvasGO.transform, "≡", Vector2.zero);
@@ -641,9 +667,7 @@ public static class YobitsugiSceneBuilder
         var closeSlotButton = CreateButton("CloseSlotButton", slotList.transform, "閉じる", Vector2.zero);
         slotPanel.SetActive(false);
 
-        var systemMenuGO = new GameObject("SystemMenuView");
-        systemMenuGO.transform.SetParent(systemsRoot, false);
-        var systemMenu = systemMenuGO.AddComponent<SystemMenuView>();
+        var systemMenu = canvasGO.AddComponent<SystemMenuView>();
         var so = new SerializedObject(systemMenu);
         so.FindProperty("menuPanel").objectReferenceValue = menuPanel;
         so.FindProperty("backlogPanel").objectReferenceValue = backlogPanel;
@@ -659,9 +683,6 @@ public static class YobitsugiSceneBuilder
         so.FindProperty("skipButtonLabel").objectReferenceValue = skipButton.GetComponentInChildren<Text>();
         so.FindProperty("backlogText").objectReferenceValue = backlogText;
         so.FindProperty("slotPanelTitle").objectReferenceValue = slotTitle;
-        so.FindProperty("vnManager").objectReferenceValue = vnManager;
-        so.FindProperty("gameModeManager").objectReferenceValue = gameModeManager;
-        so.FindProperty("saveCoordinator").objectReferenceValue = saveCoordinator;
         so.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
 
         var backButtons = new[] { closeMenuButton, closeBacklogButton, closeSlotButton };
@@ -680,15 +701,16 @@ public static class YobitsugiSceneBuilder
             slotLabelsProp.GetArrayElementAtIndex(i).objectReferenceValue = slotLabels[i];
         }
         so.ApplyModifiedPropertiesWithoutUndo();
+
+        return canvasGO;
     }
 
-    private static VNLine NewLine(string speaker, string text, VNChoice[] choices = null)
-    {
-        return new VNLine { speaker = speaker, text = text, choices = choices };
-    }
-
-    /// <summary>Loads the scenario asset, creating it with sample content only when it does not exist yet.</summary>
-    private static VNScene EnsureVNScene(string assetName, System.Func<VNLine[]> sampleLines)
+    /// <summary>
+    /// Returns the scenario asset, creating an empty one when missing.
+    /// Dialogue lives only in the asset — never in this builder — so there is a single source of truth
+    /// that writers edit in the inspector or through the CSV import tool.
+    /// </summary>
+    private static VNScene EnsureVNScene(string assetName)
     {
         System.IO.Directory.CreateDirectory(VNScenesFolder);
         string path = $"{VNScenesFolder}/{assetName}.asset";
@@ -697,9 +719,10 @@ public static class YobitsugiSceneBuilder
         if (scene != null) return scene;
 
         scene = ScriptableObject.CreateInstance<VNScene>();
-        scene.lines = sampleLines();
+        scene.lines = new VNLine[0];
         AssetDatabase.CreateAsset(scene, path);
         EditorUtility.SetDirty(scene);
+        Debug.LogWarning($"シナリオアセットを新規作成しました(中身は空です): {path}");
         return scene;
     }
 }
