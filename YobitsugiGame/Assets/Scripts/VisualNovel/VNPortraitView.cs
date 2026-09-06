@@ -38,10 +38,11 @@ namespace Yobitsugi.VisualNovel
         [Header("Layout")]
         [Tooltip("Normalised horizontal positions for Left … Right slots. Left/Right are the standard two-character stage.")]
         [SerializeField] private float[] slotAnchors = { 0.26f, 0.38f, 0.5f, 0.62f, 0.74f };
-        [Tooltip("Portrait box in reference-resolution pixels; art keeps its aspect inside it.")]
-        [SerializeField] private Vector2 portraitSize = new Vector2(820f, 1180f);
-        [Tooltip("Vertical offset so portraits sit slightly below the screen edge, as novel games usually crop them.")]
-        [SerializeField] private float baseOffsetY = -60f;
+        [Tooltip("Portrait box in reference-resolution pixels; art keeps its aspect inside it. " +
+                 "Sized so a full-body standee fits under a 1080-tall screen with headroom.")]
+        [SerializeField] private Vector2 portraitSize = new Vector2(900f, 1020f);
+        [Tooltip("Vertical offset from the bottom edge; the text panel covers the legs, as novel games do.")]
+        [SerializeField] private float baseOffsetY = 0f;
 
         [Header("Animation")]
         [SerializeField] private float enterDuration = 0.35f;

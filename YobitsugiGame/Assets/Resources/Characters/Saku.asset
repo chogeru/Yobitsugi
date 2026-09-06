@@ -18,5 +18,9 @@ MonoBehaviour:
   expressions:
   - sprite: {fileID: 21300000, guid: a645e39614b62614ba3e9f0d44754db2, type: 3}
     key: normal
+  - sprite: {fileID: 21300000, guid: 949f5365e5b045142902cf9968182eeb, type: 3}
+    key: smile
+  - sprite: {fileID: 21300000, guid: ac1fffbaf75edfb4e8fd05141e7c3b45, type: 3}
+    key: surprised
   portraitScale: 1
   portraitOffset: {x: 0, y: 0}

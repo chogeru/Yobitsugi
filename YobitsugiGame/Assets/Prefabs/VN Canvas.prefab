@@ -598,8 +598,8 @@ MonoBehaviour:
   - 0.5
   - 0.62
   - 0.74
-  portraitSize: {x: 820, y: 1180}
-  baseOffsetY: -60
+  portraitSize: {x: 900, y: 1020}
+  baseOffsetY: 0
   enterDuration: 0.35
   exitDuration: 0.25
   moveDuration: 0.3
