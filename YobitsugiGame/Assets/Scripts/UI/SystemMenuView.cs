@@ -37,7 +37,11 @@ namespace Yobitsugi.UI
         [SerializeField] private GameModeManager gameModeManager;
         [SerializeField] private SaveCoordinator saveCoordinator;
 
+        [Tooltip("Project input actions; the UI/Cancel action opens and backs out of the menu.")]
+        [SerializeField] private InputActionAsset inputActions;
+
         private SystemMenuPresenter presenter;
+        private InputAction cancelAction;
 
         public event Action MenuToggleRequested;
         public event Action AutoToggleRequested;
@@ -69,7 +73,25 @@ namespace Yobitsugi.UI
                 int index = i;
                 slotButtons[i].onClick.AddListener(() => SlotSelected?.Invoke(index));
             }
+
+            cancelAction = inputActions != null ? inputActions.FindActionMap("UI", false)?.FindAction("Cancel", false) : null;
         }
+
+        private void OnEnable()
+        {
+            if (cancelAction == null) return;
+
+            cancelAction.Enable();
+            cancelAction.performed += OnCancel;
+        }
+
+        private void OnDisable()
+        {
+            if (cancelAction == null) return;
+            cancelAction.performed -= OnCancel;
+        }
+
+        private void OnCancel(InputAction.CallbackContext context) => BackRequested?.Invoke();
 
         private void Start()
         {
@@ -78,13 +100,6 @@ namespace Yobitsugi.UI
         }
 
         private void OnDestroy() => presenter?.Dispose();
-
-        private void Update()
-        {
-            var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)
-                BackRequested?.Invoke();
-        }
 
         public void ShowPanel(SystemMenuPanel panel)
         {

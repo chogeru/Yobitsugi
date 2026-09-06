@@ -10,6 +10,7 @@ namespace Yobitsugi.VisualNovel
 
         [Tooltip("The dialogue view component (VNUI by default).")]
         [SerializeField] private VNUI view;
+        [SerializeField] private VNPortraitView portraitView;
         [SerializeField] private VNPacing pacing = new VNPacing();
 
         private VNPresenter presenter;
@@ -25,7 +26,7 @@ namespace Yobitsugi.VisualNovel
         private void Awake()
         {
             Instance = this;
-            presenter = new VNPresenter(view, pacing);
+            presenter = new VNPresenter(view, portraitView, pacing);
         }
 
         private void OnDestroy()

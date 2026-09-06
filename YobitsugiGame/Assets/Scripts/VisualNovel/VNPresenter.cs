@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using Yobitsugi.Core;
@@ -20,6 +21,7 @@ namespace Yobitsugi.VisualNovel
     public class VNPresenter : IDisposable
     {
         private readonly IVNView view;
+        private readonly IVNPortraitView portraits;
         private readonly VNPacing pacing;
 
         private VNScene currentScene;
@@ -29,6 +31,9 @@ namespace Yobitsugi.VisualNovel
         private Tween typeTween;
         private Tween autoTween;
         private bool isTyping;
+        private int[] visibleChoiceIndices;
+
+        private bool AwaitingChoice => visibleChoiceIndices != null && visibleChoiceIndices.Length > 0;
 
         public bool IsPlaying => currentScene != null;
         public bool AutoMode { get; private set; }
@@ -36,9 +41,10 @@ namespace Yobitsugi.VisualNovel
         public string CurrentSceneId => currentScene != null ? currentScene.SceneId : null;
         public int CurrentLineIndex => lineIndex;
 
-        public VNPresenter(IVNView view, VNPacing pacing)
+        public VNPresenter(IVNView view, IVNPortraitView portraits, VNPacing pacing)
         {
             this.view = view;
+            this.portraits = portraits;
             this.pacing = pacing ?? new VNPacing();
 
             view.AdvanceRequested += Advance;
@@ -56,6 +62,7 @@ namespace Yobitsugi.VisualNovel
         public void HideUI()
         {
             KillTweens();
+            portraits?.ClearAll(true);
             view.SetVisible(false);
         }
 
@@ -93,6 +100,7 @@ namespace Yobitsugi.VisualNovel
             currentScene = scene;
             lineIndex = 0;
             onComplete = completeCallback;
+            portraits?.ClearAll(true);
             view.SetVisible(true);
             GameEvents.RaiseVNSceneStarted(scene);
             ShowCurrentLine();
@@ -112,7 +120,28 @@ namespace Yobitsugi.VisualNovel
             lineIndex = Mathf.Clamp(atLineIndex, 0, scene.lines.Length - 1);
             onComplete = completeCallback;
             view.SetVisible(true);
+            RebuildStageState();
             ShowCurrentLine();
+        }
+
+        /// <summary>
+        /// Replays every stage direction up to the current line without animation, so a loaded save
+        /// shows the portraits and background the player had on screen rather than an empty stage.
+        /// </summary>
+        private void RebuildStageState()
+        {
+            portraits?.ClearAll(true);
+
+            for (int i = 0; i < lineIndex; i++)
+            {
+                var line = currentScene.lines[i];
+
+                if (line.background != null) view.SetBackground(line.background);
+                if (line.portraits == null) continue;
+
+                foreach (var command in line.portraits)
+                    portraits?.Apply(command, true);
+            }
         }
 
         public void Advance()
@@ -125,20 +154,25 @@ namespace Yobitsugi.VisualNovel
                 return;
             }
 
-            if (HasChoices(currentScene.lines[lineIndex])) return;
+            if (AwaitingChoice) return;
 
             KillTweens();
             GoToLine(lineIndex + 1);
         }
 
-        public void SelectChoice(int choiceIndex)
+        /// <summary><paramref name="visibleIndex"/> indexes the choices as displayed, which may be a filtered subset.</summary>
+        public void SelectChoice(int visibleIndex)
         {
             if (currentScene == null || isTyping) return;
 
             var line = currentScene.lines[lineIndex];
-            if (line.choices == null || choiceIndex < 0 || choiceIndex >= line.choices.Length) return;
+            if (line.choices == null || visibleChoiceIndices == null) return;
+            if (visibleIndex < 0 || visibleIndex >= visibleChoiceIndices.Length) return;
 
-            var choice = line.choices[choiceIndex];
+            var choice = line.choices[visibleChoiceIndices[visibleIndex]];
+            if (!string.IsNullOrEmpty(choice.setFlag))
+                StoryFlags.Instance?.Set(choice.setFlag, choice.setFlagValue);
+
             int next = choice.nextLineIndex >= 0 ? choice.nextLineIndex : lineIndex + 1;
 
             KillTweens();
@@ -150,6 +184,10 @@ namespace Yobitsugi.VisualNovel
 
         private void GoToLine(int index)
         {
+            // Walk past any lines whose flag conditions exclude them on this playthrough.
+            while (index >= 0 && index < currentScene.lines.Length && !PassesConditions(currentScene.lines[index]))
+                index++;
+
             if (index < 0 || index >= currentScene.lines.Length)
             {
                 EndScene();
@@ -160,15 +198,59 @@ namespace Yobitsugi.VisualNovel
             ShowCurrentLine();
         }
 
+        private static bool PassesConditions(VNLine line)
+        {
+            var flags = StoryFlags.Instance;
+            if (flags == null) return true;
+
+            if (!string.IsNullOrEmpty(line.requiredFlag) && !flags.GetBool(line.requiredFlag)) return false;
+            if (!string.IsNullOrEmpty(line.forbiddenFlag) && flags.GetBool(line.forbiddenFlag)) return false;
+
+            return true;
+        }
+
+        /// <summary>Choices whose required flag is unset are hidden; the mapping keeps indices aligned to the source list.</summary>
+        private static VNChoice[] FilterChoices(VNChoice[] choices, out int[] sourceIndices)
+        {
+            var flags = StoryFlags.Instance;
+            var visible = new List<VNChoice>(choices.Length);
+            var indices = new List<int>(choices.Length);
+
+            for (int i = 0; i < choices.Length; i++)
+            {
+                var choice = choices[i];
+                if (flags != null && !string.IsNullOrEmpty(choice.requiredFlag) && !flags.GetBool(choice.requiredFlag))
+                    continue;
+
+                visible.Add(choice);
+                indices.Add(i);
+            }
+
+            sourceIndices = indices.ToArray();
+            return visible.ToArray();
+        }
+
         private void ShowCurrentLine()
         {
             var line = currentScene.lines[lineIndex];
 
+            if (!string.IsNullOrEmpty(line.setFlag))
+                StoryFlags.Instance?.Set(line.setFlag, line.setFlagValue);
+
+            visibleChoiceIndices = null;
             view.HideChoices();
             view.SetNextIndicatorVisible(false);
-            view.SetSpeaker(line.speaker);
+            view.SetSpeaker(line.SpeakerName, line.SpeakerColor);
             view.SetBackground(line.background);
-            GameEvents.RaiseVNLineShown(line.speaker, line.text);
+
+            if (line.portraits != null)
+            {
+                foreach (var command in line.portraits)
+                    portraits?.Apply(command, false);
+            }
+            portraits?.SetSpeaking(line.character, false);
+
+            GameEvents.RaiseVNLineShown(line.SpeakerName, line.text);
 
             KillTweens();
 
@@ -201,8 +283,15 @@ namespace Yobitsugi.VisualNovel
         {
             if (HasChoices(line))
             {
-                view.ShowChoices(line.choices);
-                return;
+                var visible = FilterChoices(line.choices, out visibleChoiceIndices);
+                if (visible.Length > 0)
+                {
+                    view.ShowChoices(visible);
+                    return;
+                }
+
+                // Every option was filtered out: fall through so the scene cannot dead-end.
+                visibleChoiceIndices = null;
             }
 
             view.SetNextIndicatorVisible(true);
@@ -215,8 +304,7 @@ namespace Yobitsugi.VisualNovel
             autoTween?.Kill();
             autoTween = null;
 
-            if (currentScene == null || isTyping) return;
-            if (HasChoices(currentScene.lines[lineIndex])) return;
+            if (currentScene == null || isTyping || AwaitingChoice) return;
 
             if (AutoMode)
                 autoTween = DOVirtual.DelayedCall(pacing.autoAdvanceDelay, Advance);

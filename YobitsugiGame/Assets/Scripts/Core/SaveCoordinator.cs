@@ -49,8 +49,8 @@ namespace Yobitsugi.Core
             foreach (var participant in participants)
                 participant.Capture(data);
 
-            SaveSystem.Save(slot, data);
-            GameEvents.RaiseSaveCompleted(slot);
+            if (SaveSystem.Save(slot, data))
+                GameEvents.RaiseSaveCompleted(slot);
         }
 
         public bool Load(int slot)

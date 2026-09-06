@@ -404,6 +404,25 @@ public static class YobitsugiSceneBuilder
         backgroundFadeImage.raycastTarget = false;
         backgroundFadeImage.enabled = false;
 
+        // Portrait stage sits above the background but below the text panel and choices.
+        var stage = CreateUIObject("PortraitStage", canvasGO.transform);
+        AddRect(stage, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+
+        var portraitTemplate = CreateUIObject("PortraitTemplate", stage.transform);
+        AddRect(portraitTemplate, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(700f, 1000f));
+        var portraitImage = portraitTemplate.AddComponent<Image>();
+        portraitImage.preserveAspect = true;
+        portraitImage.raycastTarget = false;
+        portraitTemplate.SetActive(false);
+
+        var portraitViewGO = new GameObject("VNPortraitView");
+        portraitViewGO.transform.SetParent(systemsRoot, false);
+        var portraitView = portraitViewGO.AddComponent<VNPortraitView>();
+        var portraitSO = new SerializedObject(portraitView);
+        portraitSO.FindProperty("stage").objectReferenceValue = stage.GetComponent<RectTransform>();
+        portraitSO.FindProperty("portraitTemplate").objectReferenceValue = portraitImage;
+        portraitSO.ApplyModifiedPropertiesWithoutUndo();
+
         var advanceButton = CreateUIObject("AdvanceButton", canvasGO.transform);
         AddRect(advanceButton, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
         advanceButton.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0f);
@@ -455,6 +474,7 @@ public static class YobitsugiSceneBuilder
         vnUiSO.FindProperty("nextIndicator").objectReferenceValue = nextIndicator.gameObject;
         vnUiSO.FindProperty("choicesContainer").objectReferenceValue = choicesContainer.transform;
         vnUiSO.FindProperty("choiceButtonTemplate").objectReferenceValue = choiceTemplate;
+        vnUiSO.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
         vnUiSO.ApplyModifiedPropertiesWithoutUndo();
 
         var vnManagerGO = new GameObject("VNManager");
@@ -462,6 +482,7 @@ public static class YobitsugiSceneBuilder
         var vnManager = vnManagerGO.AddComponent<VNManager>();
         var vnManagerSO = new SerializedObject(vnManager);
         vnManagerSO.FindProperty("view").objectReferenceValue = vnUi;
+        vnManagerSO.FindProperty("portraitView").objectReferenceValue = portraitView;
         vnManagerSO.ApplyModifiedPropertiesWithoutUndo();
 
         var introScene = EnsureVNScene("Intro", () => new[]
@@ -501,9 +522,15 @@ public static class YobitsugiSceneBuilder
         hudVisibilitySO.FindProperty("visibleInExploration").boolValue = true;
         hudVisibilitySO.ApplyModifiedPropertiesWithoutUndo();
 
+        var flagsGO = new GameObject("StoryFlags");
+        flagsGO.transform.SetParent(systemsRoot, false);
+        flagsGO.AddComponent<StoryFlags>();
+
         var saveCoordinatorGO = new GameObject("SaveCoordinator");
         saveCoordinatorGO.transform.SetParent(systemsRoot, false);
         var saveCoordinator = saveCoordinatorGO.AddComponent<SaveCoordinator>();
+
+        BuildAudioService();
 
         BuildVNTrigger("VNTrigger_SakuEncounter", new Vector3(0f, 1.2f, 14f), new Vector3(6f, 3f, 3f), sakuScene);
         BuildSystemMenu(vnManager, gameMode, saveCoordinator);
@@ -525,6 +552,34 @@ public static class YobitsugiSceneBuilder
         so.FindProperty("scene").objectReferenceValue = scene;
         so.FindProperty("oneShot").boolValue = true;
         so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void BuildAudioService()
+    {
+        var audioGO = new GameObject("AudioService");
+        audioGO.transform.SetParent(systemsRoot, false);
+
+        var music = CreateAudioSource(audioGO.transform, "Music");
+        var ambience = CreateAudioSource(audioGO.transform, "Ambience");
+        var sfx = CreateAudioSource(audioGO.transform, "SFX");
+
+        var service = audioGO.AddComponent<Yobitsugi.Audio.AudioService>();
+        var so = new SerializedObject(service);
+        so.FindProperty("musicSource").objectReferenceValue = music;
+        so.FindProperty("ambienceSource").objectReferenceValue = ambience;
+        so.FindProperty("sfxSource").objectReferenceValue = sfx;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static AudioSource CreateAudioSource(Transform parent, string name)
+    {
+        var go = new GameObject(name);
+        go.transform.SetParent(parent, false);
+
+        var source = go.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.spatialBlend = 0f;
+        return source;
     }
 
     private static void BuildScreenFader()
@@ -607,6 +662,7 @@ public static class YobitsugiSceneBuilder
         so.FindProperty("vnManager").objectReferenceValue = vnManager;
         so.FindProperty("gameModeManager").objectReferenceValue = gameModeManager;
         so.FindProperty("saveCoordinator").objectReferenceValue = saveCoordinator;
+        so.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
 
         var backButtons = new[] { closeMenuButton, closeBacklogButton, closeSlotButton };
         var backButtonsProp = so.FindProperty("backButtons");

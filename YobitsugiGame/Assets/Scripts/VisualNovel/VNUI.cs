@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace Yobitsugi.VisualNovel
@@ -21,6 +22,10 @@ namespace Yobitsugi.VisualNovel
         [SerializeField] private Transform choicesContainer;
         [SerializeField] private Button choiceButtonTemplate;
 
+        [Header("Input")]
+        [Tooltip("Project input actions; the UI/Submit action advances dialogue from keyboard and gamepad.")]
+        [SerializeField] private InputActionAsset inputActions;
+
         [Header("Presentation")]
         [SerializeField] private float panelFadeIn = 0.3f;
         [SerializeField] private float panelRise = 40f;
@@ -30,6 +35,7 @@ namespace Yobitsugi.VisualNovel
         [SerializeField] private float choiceEnterScale = 0.85f;
 
         private readonly List<Button> spawnedChoices = new List<Button>();
+        private InputAction submitAction;
 
         public event Action AdvanceRequested;
         public event Action<int> ChoiceSelected;
@@ -37,6 +43,28 @@ namespace Yobitsugi.VisualNovel
         private void Awake()
         {
             advanceButton.onClick.AddListener(() => AdvanceRequested?.Invoke());
+            submitAction = inputActions != null ? inputActions.FindActionMap("UI", false)?.FindAction("Submit", false) : null;
+        }
+
+        private void OnEnable()
+        {
+            if (submitAction == null) return;
+
+            submitAction.Enable();
+            submitAction.performed += OnSubmit;
+        }
+
+        private void OnDisable()
+        {
+            if (submitAction == null) return;
+            submitAction.performed -= OnSubmit;
+        }
+
+        private void OnSubmit(InputAction.CallbackContext context)
+        {
+            // Keyboard/gamepad advance, but only while the dialogue screen is the thing on screen.
+            if (root != null && root.activeInHierarchy && advanceButton.gameObject.activeSelf)
+                AdvanceRequested?.Invoke();
         }
 
         public void SetVisible(bool visible)
@@ -70,7 +98,11 @@ namespace Yobitsugi.VisualNovel
                 .SetLink(gameObject);
         }
 
-        public void SetSpeaker(string speaker) => speakerText.text = speaker;
+        public void SetSpeaker(string speaker, Color color)
+        {
+            speakerText.text = speaker;
+            speakerText.color = color;
+        }
 
         public void SetBackground(Sprite sprite)
         {

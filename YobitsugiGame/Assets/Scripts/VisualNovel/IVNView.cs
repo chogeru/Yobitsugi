@@ -14,7 +14,7 @@ namespace Yobitsugi.VisualNovel
         event Action<int> ChoiceSelected;
 
         void SetVisible(bool visible);
-        void SetSpeaker(string speaker);
+        void SetSpeaker(string speaker, Color color);
         void SetBackground(Sprite sprite);
         void SetDialogueText(string text);
 
