@@ -1,12 +1,12 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 using Yobitsugi.Core;
 
 namespace Yobitsugi.UI
 {
     public class ClueCounterUI : MonoBehaviour
     {
-        [SerializeField] private Text counterText;
+        [SerializeField] private TMP_Text counterText;
 
         private void Start()
         {

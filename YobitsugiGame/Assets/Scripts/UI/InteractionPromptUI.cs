@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 using Yobitsugi.Core;
 using Yobitsugi.Player;
 
@@ -9,7 +9,7 @@ namespace Yobitsugi.UI
     {
         [SerializeField] private PlayerInteractor interactor;
         [SerializeField] private GameObject panel;
-        [SerializeField] private Text promptText;
+        [SerializeField] private TMP_Text promptText;
 
         private void OnEnable()
         {

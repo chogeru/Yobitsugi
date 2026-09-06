@@ -13,10 +13,14 @@ namespace Yobitsugi.VisualNovel
     {
         private class StagedPortrait
         {
+            /// <summary>Outer transform: owns slot position and the speaking step-forward.</summary>
+            public RectTransform Root;
+            /// <summary>Inner transform: owns the idle breathing loop, so the two never fight over one property.</summary>
+            public RectTransform Body;
             public Image Image;
-            public RectTransform Rect;
             public PortraitSlot Slot;
             public string Expression;
+            public Tween Breath;
         }
 
 #if ODIN_INSPECTOR
@@ -60,6 +64,13 @@ namespace Yobitsugi.VisualNovel
         [Tooltip("Keep at 1 so dimmed characters darken without shifting size.")]
         [SerializeField] private float idleScale = 1f;
         [SerializeField] private float highlightDuration = 0.25f;
+        [Tooltip("How far the speaking character steps toward the viewer.")]
+        [SerializeField] private float speakingLift = 18f;
+
+        [Header("Idle motion")]
+        [Tooltip("Gentle breathing so a silent character never looks like a frozen image.")]
+        [SerializeField] private float breathDistance = 7f;
+        [SerializeField] private float breathSeconds = 2.6f;
 
         private readonly Dictionary<CharacterDefinition, StagedPortrait> staged =
             new Dictionary<CharacterDefinition, StagedPortrait>();
@@ -88,84 +99,119 @@ namespace Yobitsugi.VisualNovel
                 return;
             }
 
-            var image = Instantiate(portraitTemplate, stage);
+            // Root carries staging, body carries breathing: one property each, so tweens never overwrite each other.
+            var rootGO = new GameObject(command.character.CharacterId, typeof(RectTransform));
+            var root = (RectTransform)rootGO.transform;
+            root.SetParent(stage, false);
+
+            var image = Instantiate(portraitTemplate, root);
             image.gameObject.SetActive(true);
             image.sprite = command.character.GetExpression(command.expression);
             image.preserveAspect = true;
             image.raycastTarget = false;
 
-            var rect = (RectTransform)image.transform;
-            rect.sizeDelta = portraitSize;
+            var body = (RectTransform)image.transform;
+            body.anchorMin = body.anchorMax = new Vector2(0.5f, 0f);
+            body.pivot = new Vector2(0.5f, 0f);
+            body.anchoredPosition = Vector2.zero;
+            body.sizeDelta = portraitSize;
 
             var portrait = new StagedPortrait
             {
+                Root = root,
+                Body = body,
                 Image = image,
-                Rect = rect,
                 Slot = command.slot,
                 Expression = command.expression,
             };
             staged[command.character] = portrait;
 
             PlaceAt(portrait, command.character, command.slot);
-            var target = rect.anchoredPosition;
+            var target = root.anchoredPosition;
 
             if (instant)
             {
                 image.color = idleTint;
-                rect.localScale = Vector3.one * command.character.portraitScale * idleScale;
+                StartBreathing(portrait);
                 return;
             }
 
-            DOTween.Kill(rect);
+            DOTween.Kill(root);
             switch (command.transition)
             {
                 case PortraitTransition.SlideFromEdge:
                     float from = command.slot <= PortraitSlot.CenterLeft ? -slideDistance : slideDistance;
-                    rect.anchoredPosition = target + new Vector2(from, 0f);
-                    rect.DOAnchorPos(target, enterDuration).SetEase(Ease.OutCubic).SetLink(image.gameObject);
+                    root.anchoredPosition = target + new Vector2(from, 0f);
+                    root.DOAnchorPos(target, enterDuration).SetEase(Ease.OutCubic).SetLink(rootGO);
                     break;
 
                 case PortraitTransition.Pop:
-                    rect.localScale = Vector3.one * command.character.portraitScale * 0.85f;
-                    rect.DOScale(Vector3.one * command.character.portraitScale, enterDuration)
-                        .SetEase(Ease.OutBack).SetLink(image.gameObject);
+                    root.localScale = Vector3.one * 0.9f;
+                    root.DOScale(Vector3.one, enterDuration).SetEase(Ease.OutBack).SetLink(rootGO);
+                    break;
+
+                default:
+                    // Even a plain fade drifts up a little; a portrait that only fades looks pasted on.
+                    root.anchoredPosition = target - new Vector2(0f, 26f);
+                    root.DOAnchorPos(target, enterDuration).SetEase(Ease.OutCubic).SetLink(rootGO);
                     break;
             }
 
             var color = idleTint;
             color.a = 0f;
             image.color = color;
-            image.DOFade(idleTint.a, enterDuration).SetLink(image.gameObject);
+            image.DOFade(idleTint.a, enterDuration).SetLink(rootGO)
+                .OnComplete(() => StartBreathing(portrait));
+        }
+
+        private void StartBreathing(StagedPortrait portrait)
+        {
+            portrait.Breath?.Kill();
+            if (portrait.Body == null || breathDistance <= 0f) return;
+
+            portrait.Body.anchoredPosition = Vector2.zero;
+            portrait.Breath = portrait.Body
+                .DOAnchorPosY(breathDistance, breathSeconds)
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo)
+                .SetDelay(Random.Range(0f, breathSeconds))   // stagger so characters do not breathe in sync
+                .SetLink(portrait.Body.gameObject);
         }
 
         private void Hide(VNPortraitCommand command, bool instant)
         {
             if (!staged.TryGetValue(command.character, out var portrait)) return;
             staged.Remove(command.character);
+            portrait.Breath?.Kill();
 
-            if (instant || portrait.Image == null)
+            if (instant || portrait.Root == null)
             {
-                if (portrait.Image != null) Destroy(portrait.Image.gameObject);
+                if (portrait.Root != null) Destroy(portrait.Root.gameObject);
                 return;
             }
 
-            var rect = portrait.Rect;
-            DOTween.Kill(rect);
+            var root = portrait.Root;
+            DOTween.Kill(root);
 
-            var sequence = DOTween.Sequence().SetLink(portrait.Image.gameObject);
-            if (command.transition == PortraitTransition.SlideFromEdge)
+            var sequence = DOTween.Sequence().SetLink(root.gameObject);
+            switch (command.transition)
             {
-                float to = portrait.Slot <= PortraitSlot.CenterLeft ? -slideDistance : slideDistance;
-                sequence.Join(rect.DOAnchorPos(rect.anchoredPosition + new Vector2(to, 0f), exitDuration).SetEase(Ease.InCubic));
-            }
-            else if (command.transition == PortraitTransition.Pop)
-            {
-                sequence.Join(rect.DOScale(rect.localScale * 0.85f, exitDuration).SetEase(Ease.InBack));
+                case PortraitTransition.SlideFromEdge:
+                    float to = portrait.Slot <= PortraitSlot.CenterLeft ? -slideDistance : slideDistance;
+                    sequence.Join(root.DOAnchorPos(root.anchoredPosition + new Vector2(to, 0f), exitDuration).SetEase(Ease.InCubic));
+                    break;
+
+                case PortraitTransition.Pop:
+                    sequence.Join(root.DOScale(root.localScale * 0.9f, exitDuration).SetEase(Ease.InBack));
+                    break;
+
+                default:
+                    sequence.Join(root.DOAnchorPos(root.anchoredPosition - new Vector2(0f, 26f), exitDuration).SetEase(Ease.InCubic));
+                    break;
             }
 
-            var image = portrait.Image;
-            sequence.Join(image.DOFade(0f, exitDuration));
-            sequence.OnComplete(() => { if (image != null) Destroy(image.gameObject); });
+            sequence.Join(portrait.Image.DOFade(0f, exitDuration));
+            sequence.OnComplete(() => { if (root != null) Destroy(root.gameObject); });
         }
 
         private void SetExpression(VNPortraitCommand command, bool instant)
@@ -192,6 +238,10 @@ namespace Yobitsugi.VisualNovel
             overlay.DOFade(0f, expressionCrossfade)
                 .OnComplete(() => { if (overlay != null) Destroy(overlay.gameObject); })
                 .SetLink(overlay.gameObject);
+
+            // A small settle sells the change of mood better than a straight crossfade.
+            portrait.Root.DOPunchScale(Vector3.one * 0.012f, expressionCrossfade * 2f, 1, 0.4f)
+                .SetLink(portrait.Root.gameObject);
         }
 
         private void Move(VNPortraitCommand command, bool instant)
@@ -200,21 +250,21 @@ namespace Yobitsugi.VisualNovel
             if (portrait.Slot == command.slot && !instant) return;
 
             portrait.Slot = command.slot;
-            var current = portrait.Rect.anchoredPosition;
+            var current = portrait.Root.anchoredPosition;
             PlaceAt(portrait, command.character, command.slot);
 
             if (instant) return;
 
-            var target = portrait.Rect.anchoredPosition;
-            portrait.Rect.anchoredPosition = current;
-            portrait.Rect.DOAnchorPos(target, moveDuration).SetEase(Ease.InOutCubic).SetLink(portrait.Image.gameObject);
+            var target = portrait.Root.anchoredPosition;
+            portrait.Root.anchoredPosition = current;
+            portrait.Root.DOAnchorPos(target, moveDuration).SetEase(Ease.InOutCubic).SetLink(portrait.Root.gameObject);
         }
 
         private void Emote(VNPortraitCommand command, bool instant)
         {
             if (instant || !staged.TryGetValue(command.character, out var portrait)) return;
 
-            var rect = portrait.Rect;
+            var rect = portrait.Root;
             var basePosition = rect.anchoredPosition;
 
             switch (command.emote)
@@ -241,6 +291,7 @@ namespace Yobitsugi.VisualNovel
             }
         }
 
+        /// <summary>The speaker brightens and steps forward; the others darken and settle back.</summary>
         public void SetSpeaking(CharacterDefinition character, bool instant)
         {
             foreach (var pair in staged)
@@ -251,16 +302,20 @@ namespace Yobitsugi.VisualNovel
 
                 var tint = speaking ? speakingTint : idleTint;
                 var scale = Vector3.one * pair.Key.portraitScale * (speaking ? speakingScale : idleScale);
+                float lift = speaking ? speakingLift : 0f;
+                var position = SlotPosition(pair.Key, portrait.Slot) + new Vector2(0f, lift);
 
                 if (instant)
                 {
                     portrait.Image.color = tint;
-                    portrait.Rect.localScale = scale;
+                    portrait.Root.localScale = scale;
+                    portrait.Root.anchoredPosition = position;
                     continue;
                 }
 
-                portrait.Image.DOColor(tint, highlightDuration).SetLink(portrait.Image.gameObject);
-                portrait.Rect.DOScale(scale, highlightDuration).SetEase(Ease.OutQuad).SetLink(portrait.Image.gameObject);
+                portrait.Image.DOColor(tint, highlightDuration).SetLink(portrait.Root.gameObject);
+                portrait.Root.DOScale(scale, highlightDuration).SetEase(Ease.OutQuad).SetLink(portrait.Root.gameObject);
+                portrait.Root.DOAnchorPos(position, highlightDuration).SetEase(Ease.OutQuad).SetLink(portrait.Root.gameObject);
             }
         }
 
@@ -268,21 +323,28 @@ namespace Yobitsugi.VisualNovel
         {
             foreach (var pair in staged)
             {
-                if (pair.Value.Image == null) continue;
+                var portrait = pair.Value;
+                portrait.Breath?.Kill();
+                if (portrait.Root == null) continue;
 
                 if (instant)
                 {
-                    Destroy(pair.Value.Image.gameObject);
+                    Destroy(portrait.Root.gameObject);
                     continue;
                 }
 
-                var image = pair.Value.Image;
-                image.DOFade(0f, exitDuration)
-                    .OnComplete(() => { if (image != null) Destroy(image.gameObject); })
-                    .SetLink(image.gameObject);
+                var root = portrait.Root;
+                portrait.Image.DOFade(0f, exitDuration)
+                    .OnComplete(() => { if (root != null) Destroy(root.gameObject); })
+                    .SetLink(root.gameObject);
             }
 
             staged.Clear();
+        }
+
+        private Vector2 SlotPosition(CharacterDefinition character, PortraitSlot slot)
+        {
+            return character.portraitOffset + new Vector2(0f, baseOffsetY);
         }
 
         private void PlaceAt(StagedPortrait portrait, CharacterDefinition character, PortraitSlot slot)
@@ -290,12 +352,13 @@ namespace Yobitsugi.VisualNovel
             int index = Mathf.Clamp((int)slot, 0, slotAnchors.Length - 1);
             float anchorX = slotAnchors[index];
 
-            var rect = portrait.Rect;
-            rect.anchorMin = new Vector2(anchorX, 0f);
-            rect.anchorMax = new Vector2(anchorX, 0f);
-            rect.pivot = new Vector2(0.5f, 0f);
-            rect.anchoredPosition = character.portraitOffset + new Vector2(0f, baseOffsetY);
-            rect.localScale = Vector3.one * character.portraitScale;
+            var root = portrait.Root;
+            root.anchorMin = new Vector2(anchorX, 0f);
+            root.anchorMax = new Vector2(anchorX, 0f);
+            root.pivot = new Vector2(0.5f, 0f);
+            root.sizeDelta = portraitSize;
+            root.anchoredPosition = SlotPosition(character, slot);
+            root.localScale = Vector3.one * character.portraitScale;
         }
     }
 }

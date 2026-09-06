@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -15,8 +16,8 @@ namespace Yobitsugi.VisualNovel
         [SerializeField] private Image backgroundImage;
         [SerializeField] private Image backgroundFadeImage;
         [SerializeField] private CanvasGroup textPanelGroup;
-        [SerializeField] private Text speakerText;
-        [SerializeField] private Text dialogueText;
+        [SerializeField] private TMP_Text speakerText;
+        [SerializeField] private TMP_Text dialogueText;
         [SerializeField] private Button advanceButton;
         [SerializeField] private GameObject nextIndicator;
         [SerializeField] private Transform choicesContainer;
@@ -123,13 +124,26 @@ namespace Yobitsugi.VisualNovel
                 .SetLink(gameObject);
         }
 
-        public void SetDialogueText(string text) => dialogueText.text = text;
+        public void SetDialogueText(string text)
+        {
+            dialogueText.text = text;
+            dialogueText.maxVisibleCharacters = int.MaxValue;
+        }
 
+        /// <summary>
+        /// Reveals by raising the visible character count rather than rebuilding the string, so
+        /// rich-text tags never get sliced in half and no garbage is generated per character.
+        /// </summary>
         public Tween TypeDialogue(string text, float duration)
         {
-            dialogueText.text = string.Empty;
-            return dialogueText.DOText(text, duration)
+            dialogueText.text = text;
+            dialogueText.maxVisibleCharacters = 0;
+            dialogueText.ForceMeshUpdate();
+
+            int total = dialogueText.textInfo.characterCount;
+            return DOVirtual.Int(0, total, duration, value => dialogueText.maxVisibleCharacters = value)
                 .SetEase(Ease.Linear)
+                .OnComplete(() => dialogueText.maxVisibleCharacters = int.MaxValue)
                 .SetLink(gameObject);
         }
 
@@ -150,7 +164,7 @@ namespace Yobitsugi.VisualNovel
                 var button = Instantiate(choiceButtonTemplate, choicesContainer);
                 button.gameObject.SetActive(true);
 
-                var label = button.GetComponentInChildren<Text>();
+                var label = button.GetComponentInChildren<TMP_Text>();
                 if (label != null) label.text = choices[i].text;
 
                 button.onClick.AddListener(() => ChoiceSelected?.Invoke(choiceIndex));

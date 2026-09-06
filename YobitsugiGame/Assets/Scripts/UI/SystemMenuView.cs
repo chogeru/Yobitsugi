@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 using UnityEngine.UI;
 using Yobitsugi.Core;
 #if ODIN_INSPECTOR
@@ -36,11 +37,11 @@ namespace Yobitsugi.UI
         [SerializeField] private Button[] slotButtons;
 
         [Header("Labels")]
-        [SerializeField] private Text autoButtonLabel;
-        [SerializeField] private Text skipButtonLabel;
-        [SerializeField] private Text backlogText;
-        [SerializeField] private Text slotPanelTitle;
-        [SerializeField] private Text[] slotButtonLabels;
+        [SerializeField] private TMP_Text autoButtonLabel;
+        [SerializeField] private TMP_Text skipButtonLabel;
+        [SerializeField] private TMP_Text backlogText;
+        [SerializeField] private TMP_Text slotPanelTitle;
+        [SerializeField] private TMP_Text[] slotButtonLabels;
 
         [Header("Systems")]
         [SerializeField] private VisualNovel.VNManager vnManager;

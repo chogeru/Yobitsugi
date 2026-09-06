@@ -375,19 +375,33 @@ public static class YobitsugiSceneBuilder
         return rt;
     }
 
-    private static Text CreateText(string name, Transform parent, string content, Vector2 anchorMin, Vector2 anchorMax,
+    private static TMPro.TMP_Text CreateText(string name, Transform parent, string content, Vector2 anchorMin, Vector2 anchorMax,
         Vector2 pivot, Vector2 anchoredPos, Vector2 sizeDelta, int fontSize, TextAnchor alignment)
     {
         var go = CreateUIObject(name, parent);
         AddRect(go, anchorMin, anchorMax, pivot, anchoredPos, sizeDelta);
-        var text = go.AddComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+
+        var text = go.AddComponent<TMPro.TextMeshProUGUI>();
         text.fontSize = fontSize;
-        text.alignment = alignment;
+        text.alignment = ToTmpAlignment(alignment);
         text.color = Color.white;
         text.text = content;
+        text.richText = true;
         return text;
     }
+
+    private static TMPro.TextAlignmentOptions ToTmpAlignment(TextAnchor anchor) => anchor switch
+    {
+        TextAnchor.UpperLeft => TMPro.TextAlignmentOptions.TopLeft,
+        TextAnchor.UpperCenter => TMPro.TextAlignmentOptions.Top,
+        TextAnchor.UpperRight => TMPro.TextAlignmentOptions.TopRight,
+        TextAnchor.MiddleLeft => TMPro.TextAlignmentOptions.Left,
+        TextAnchor.MiddleCenter => TMPro.TextAlignmentOptions.Center,
+        TextAnchor.MiddleRight => TMPro.TextAlignmentOptions.Right,
+        TextAnchor.LowerLeft => TMPro.TextAlignmentOptions.BottomLeft,
+        TextAnchor.LowerCenter => TMPro.TextAlignmentOptions.Bottom,
+        _ => TMPro.TextAlignmentOptions.BottomRight,
+    };
 
     private static GameObject CreateFullScreenPanel(string name, Transform parent, Color color)
     {
@@ -518,12 +532,12 @@ public static class YobitsugiSceneBuilder
         var speakerText = CreateText("SpeakerText", textPanel.transform, "",
             new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(40f, -18f), new Vector2(-80f, 44f),
             30, TextAnchor.UpperLeft);
-        speakerText.fontStyle = FontStyle.Bold;
+        speakerText.fontStyle = TMPro.FontStyles.Bold;
 
         var dialogueText = CreateText("DialogueText", textPanel.transform, "",
             Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), new Vector2(0f, -22f), new Vector2(-80f, -76f),
             34, TextAnchor.UpperLeft);
-        dialogueText.lineSpacing = 1.25f;
+        dialogueText.lineSpacing = 12f;
 
         var nextIndicator = CreateText("NextIndicator", textPanel.transform, "▼",
             new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 20f), new Vector2(40f, 40f),
@@ -544,7 +558,7 @@ public static class YobitsugiSceneBuilder
         AddRect(choiceTemplate.gameObject, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
             Vector2.zero, new Vector2(760f, 76f));
         choiceTemplate.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.62f);
-        choiceTemplate.GetComponentInChildren<Text>().fontSize = 30;
+        choiceTemplate.GetComponentInChildren<TMPro.TMP_Text>().fontSize = 30;
         choiceTemplate.gameObject.SetActive(false);
 
         var vnUi = canvasGO.AddComponent<VNUI>();
@@ -581,8 +595,8 @@ public static class YobitsugiSceneBuilder
         so.FindProperty("backgroundImage").objectReferenceValue = canvas.transform.Find("Background").GetComponent<Image>();
         so.FindProperty("backgroundFadeImage").objectReferenceValue = canvas.transform.Find("BackgroundFade").GetComponent<Image>();
         so.FindProperty("textPanelGroup").objectReferenceValue = textPanel.GetComponent<CanvasGroup>();
-        so.FindProperty("speakerText").objectReferenceValue = textPanel.Find("SpeakerText").GetComponent<Text>();
-        so.FindProperty("dialogueText").objectReferenceValue = textPanel.Find("DialogueText").GetComponent<Text>();
+        so.FindProperty("speakerText").objectReferenceValue = textPanel.Find("SpeakerText").GetComponent<TMPro.TMP_Text>();
+        so.FindProperty("dialogueText").objectReferenceValue = textPanel.Find("DialogueText").GetComponent<TMPro.TMP_Text>();
         so.FindProperty("advanceButton").objectReferenceValue = canvas.transform.Find("AdvanceButton").GetComponent<Button>();
         so.FindProperty("nextIndicator").objectReferenceValue = textPanel.Find("NextIndicator").gameObject;
         so.FindProperty("choicesContainer").objectReferenceValue = canvas.transform.Find("ChoicesContainer");
@@ -679,10 +693,10 @@ public static class YobitsugiSceneBuilder
         so.FindProperty("saveButton").objectReferenceValue = buttons.Find("SaveButton").GetComponent<Button>();
         so.FindProperty("loadButton").objectReferenceValue = buttons.Find("LoadButton").GetComponent<Button>();
         so.FindProperty("restartButton").objectReferenceValue = buttons.Find("RestartButton").GetComponent<Button>();
-        so.FindProperty("autoButtonLabel").objectReferenceValue = buttons.Find("AutoButton").GetComponentInChildren<Text>();
-        so.FindProperty("skipButtonLabel").objectReferenceValue = buttons.Find("SkipButton").GetComponentInChildren<Text>();
-        so.FindProperty("backlogText").objectReferenceValue = backlogPanel.Find("BacklogText").GetComponent<Text>();
-        so.FindProperty("slotPanelTitle").objectReferenceValue = slotPanel.Find("SlotPanelTitle").GetComponent<Text>();
+        so.FindProperty("autoButtonLabel").objectReferenceValue = buttons.Find("AutoButton").GetComponentInChildren<TMPro.TMP_Text>();
+        so.FindProperty("skipButtonLabel").objectReferenceValue = buttons.Find("SkipButton").GetComponentInChildren<TMPro.TMP_Text>();
+        so.FindProperty("backlogText").objectReferenceValue = backlogPanel.Find("BacklogText").GetComponent<TMPro.TMP_Text>();
+        so.FindProperty("slotPanelTitle").objectReferenceValue = slotPanel.Find("SlotPanelTitle").GetComponent<TMPro.TMP_Text>();
         so.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
         so.FindProperty("vnManager").objectReferenceValue = vnManager;
         so.FindProperty("gameModeManager").objectReferenceValue = gameModeManager;
@@ -707,7 +721,7 @@ public static class YobitsugiSceneBuilder
         {
             var slotButton = slotList.Find($"SlotButton_{i}").GetComponent<Button>();
             slotProp.GetArrayElementAtIndex(i).objectReferenceValue = slotButton;
-            labelProp.GetArrayElementAtIndex(i).objectReferenceValue = slotButton.GetComponentInChildren<Text>();
+            labelProp.GetArrayElementAtIndex(i).objectReferenceValue = slotButton.GetComponentInChildren<TMPro.TMP_Text>();
         }
 
         so.ApplyModifiedPropertiesWithoutUndo();
@@ -748,14 +762,14 @@ public static class YobitsugiSceneBuilder
 
         var slotList = CreateVerticalList("SlotButtons", slotPanel.transform, new Vector2(520f, 320f));
         var slotButtons = new Button[SaveSystem.SlotCount];
-        var slotLabels = new Text[SaveSystem.SlotCount];
+        var slotLabels = new TMPro.TMP_Text[SaveSystem.SlotCount];
         for (int i = 0; i < SaveSystem.SlotCount; i++)
         {
             var slotButton = CreateButton($"SlotButton_{i}", slotList.transform, $"スロット{i + 1}: (空)", Vector2.zero);
             AddRect(slotButton.gameObject, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
                 Vector2.zero, new Vector2(460f, 56f));
             slotButtons[i] = slotButton;
-            slotLabels[i] = slotButton.GetComponentInChildren<Text>();
+            slotLabels[i] = slotButton.GetComponentInChildren<TMPro.TMP_Text>();
         }
         var closeSlotButton = CreateButton("CloseSlotButton", slotList.transform, "閉じる", Vector2.zero);
         slotPanel.SetActive(false);
@@ -772,8 +786,8 @@ public static class YobitsugiSceneBuilder
         so.FindProperty("saveButton").objectReferenceValue = saveButton;
         so.FindProperty("loadButton").objectReferenceValue = loadButton;
         so.FindProperty("restartButton").objectReferenceValue = restartButton;
-        so.FindProperty("autoButtonLabel").objectReferenceValue = autoButton.GetComponentInChildren<Text>();
-        so.FindProperty("skipButtonLabel").objectReferenceValue = skipButton.GetComponentInChildren<Text>();
+        so.FindProperty("autoButtonLabel").objectReferenceValue = autoButton.GetComponentInChildren<TMPro.TMP_Text>();
+        so.FindProperty("skipButtonLabel").objectReferenceValue = skipButton.GetComponentInChildren<TMPro.TMP_Text>();
         so.FindProperty("backlogText").objectReferenceValue = backlogText;
         so.FindProperty("slotPanelTitle").objectReferenceValue = slotTitle;
         so.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
