@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 namespace Yobitsugi.VisualNovel
 {
@@ -16,8 +19,20 @@ namespace Yobitsugi.VisualNovel
             public string Expression;
         }
 
+#if ODIN_INSPECTOR
+        [Title("立ち絵ステージ", "キャラクターの登場・退場・表情・感情表現を描画する", TitleAlignments.Left)]
+        [InfoBox("シナリオ側の使い方: VN Scene の各行にある「立ち絵」欄に指示を並べます。\n" +
+                 "登場(Show) / 退場(Hide) / 表情変更(SetExpression) / 移動(Move) / 感情(Emote)\n" +
+                 "話者に指定されたキャラは自動で明るく前に出て、それ以外は暗く小さくなります。\n" +
+                 "立ち絵の画像は「Yobitsugi/Build Character Definitions from Art」で一括登録できます。")]
+        [Required, BoxGroup("参照"), LabelText("配置先")]
+#endif
         [Header("Refs")]
         [SerializeField] private RectTransform stage;
+
+#if ODIN_INSPECTOR
+        [Required, BoxGroup("参照"), LabelText("立ち絵の雛形")]
+#endif
         [SerializeField] private Image portraitTemplate;
 
         [Header("Layout")]

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 namespace Yobitsugi.Core
 {
@@ -11,6 +14,15 @@ namespace Yobitsugi.Core
     public class SaveCoordinator : MonoBehaviour
     {
         public static SaveCoordinator Instance { get; private set; }
+
+#if ODIN_INSPECTOR
+        [Title("セーブ管理", "保存対象を自動で集めて、まとめて読み書きする", TitleAlignments.Left)]
+        [InfoBox("保存する情報を増やしたい時は、そのクラスに ISaveParticipant を実装するだけです。\n" +
+                 "このコンポーネントはシーン内から自動で見つけるため、変更は不要です。\n" +
+                 "現在の参加者: GameManager(手がかり) / StoryFlags(フラグ) / GameModeManager(位置とノベル進行)")]
+        [ShowInInspector, ReadOnly, LabelText("保存対象"), ListDrawerSettings(IsReadOnly = true)]
+        private string[] ParticipantNames => participants.ConvertAll(p => p.GetType().Name).ToArray();
+#endif
 
         private readonly List<ISaveParticipant> participants = new List<ISaveParticipant>();
 

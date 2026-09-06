@@ -2,6 +2,9 @@ using DG.Tweening;
 using UnityEngine;
 using Yobitsugi.Core;
 using Yobitsugi.VisualNovel;
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 namespace Yobitsugi.Audio
 {
@@ -11,6 +14,13 @@ namespace Yobitsugi.Audio
     /// </summary>
     public class AudioService : MonoBehaviour
     {
+#if ODIN_INSPECTOR
+        [Title("サウンド", "ゲーム内イベントを購読して鳴らすだけの独立モジュール", TitleAlignments.Left)]
+        [InfoBox("他のシステムはサウンドのことを一切知りません。GameEvents を購読しているだけなので、\n" +
+                 "クリップを差し替えても・このオブジェクトを消しても、ゲーム進行には影響しません。\n" +
+                 "反応するイベント: モード切替(BGM/環境音) / 台詞表示 / 手がかり取得 / セーブ完了")]
+        [BoxGroup("再生元")]
+#endif
         [Header("Sources")]
         [SerializeField] private AudioSource musicSource;
         [SerializeField] private AudioSource ambienceSource;

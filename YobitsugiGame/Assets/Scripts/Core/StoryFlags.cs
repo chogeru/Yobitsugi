@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 namespace Yobitsugi.Core
 {
@@ -12,6 +15,15 @@ namespace Yobitsugi.Core
     {
         public static StoryFlags Instance { get; private set; }
 
+#if ODIN_INSPECTOR
+        [Title("ストーリーフラグ", "選択の結果・既読イベント・カウンタの保管庫", TitleAlignments.Left)]
+        [InfoBox("シナリオ側の使い方:\n" +
+                 "・行/選択肢の「設定フラグ」に名前を書くと、そこを通った時に値が入ります\n" +
+                 "・行の「表示条件フラグ」「除外フラグ」で、その行を出す/飛ばすを切り替えられます\n" +
+                 "・選択肢の「表示条件フラグ」で、条件を満たした時だけ出る選択肢を作れます\n" +
+                 "内容はセーブデータに含まれます。")]
+        [ShowInInspector, ReadOnly, DictionaryDrawerSettings(KeyLabel = "フラグ名", ValueLabel = "値"), LabelText("現在のフラグ")]
+#endif
         private readonly Dictionary<string, int> values = new Dictionary<string, int>();
 
         public int SaveOrder => 5;
@@ -44,10 +56,7 @@ namespace Yobitsugi.Core
 
         public void Add(string key, int delta) => Set(key, Get(key) + delta);
 
-        public void Clear()
-        {
-            values.Clear();
-        }
+        public void Clear() => values.Clear();
 
         // --- ISaveParticipant ---
 

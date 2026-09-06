@@ -5,6 +5,9 @@ using UnityEngine;
 using Yobitsugi.Player;
 using Yobitsugi.UI;
 using Yobitsugi.VisualNovel;
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 namespace Yobitsugi.Core
 {
@@ -13,11 +16,32 @@ namespace Yobitsugi.Core
     {
         public static GameModeManager Instance { get; private set; }
 
+#if ODIN_INSPECTOR
+        [Title("ゲームモード管理", "2D(ノベル) と 3D(探索) の切り替えを一手に引き受ける中枢", TitleAlignments.Left)]
+        [InfoBox("・起動時にイントロシーンがあればノベルモードで開始します\n" +
+                 "・ノベル終了時は自動で探索モードへ戻ります\n" +
+                 "・切り替えは必ず暗転(ScreenFader)を挟みます\n" +
+                 "・HUDの表示/非表示はここから直接触らず、GameEvents 経由で ModeVisibility が行います")]
+        [Required("プレイヤーが未設定だとモード切替時に操作をロックできません"), BoxGroup("参照")]
+#endif
         [SerializeField] private PlayerController player;
+
+#if ODIN_INSPECTOR
+        [Required, BoxGroup("参照")]
+#endif
         [SerializeField] private VNManager vnManager;
+
+#if ODIN_INSPECTOR
+        [BoxGroup("シナリオ"), LabelText("開始時のノベルシーン")]
+        [InfoBox("空にするとノベルを挟まず探索モードで開始します。", InfoMessageType.None)]
+#endif
         [SerializeField] private VNScene introScene;
 
+#if ODIN_INSPECTOR
+        [ShowInInspector, ReadOnly, BoxGroup("実行時の状態"), LabelText("ノベルモード中")]
+#endif
         public bool IsInVN { get; private set; }
+
         public int SaveOrder => 10;
 
         private void Awake()

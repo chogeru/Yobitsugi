@@ -3,12 +3,22 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Yobitsugi.Core;
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 namespace Yobitsugi.UI
 {
     /// <summary>MVP view + composition root for the system menu. Wires Unity widgets to <see cref="SystemMenuPresenter"/>.</summary>
     public class SystemMenuView : MonoBehaviour, ISystemMenuView
     {
+#if ODIN_INSPECTOR
+        [Title("システムメニュー(View)", "オート/スキップ・ログ・セーブ/ロードのUI", TitleAlignments.Left)]
+        [InfoBox("MVPのView側です。ここにあるのは「表示」と「押された事の通知」だけで、\n" +
+                 "実際の処理は MonoBehaviour ではない SystemMenuPresenter が行います。\n" +
+                 "開閉は画面右上のボタン、またはキーボードのEsc / ゲームパッドのキャンセルボタンです。")]
+        [FoldoutGroup("パネル")]
+#endif
         [Header("Panels")]
         [SerializeField] private GameObject menuPanel;
         [SerializeField] private GameObject backlogPanel;
