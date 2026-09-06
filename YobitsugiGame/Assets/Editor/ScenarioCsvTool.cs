@@ -73,6 +73,47 @@ public static class ScenarioCsvTool
         Debug.Log($"シナリオを書き出しました: {path} ({scene.lines?.Length ?? 0} 行)");
     }
 
+    /// <summary>
+    /// Imports every CSV in the scenario folder into the VN Scene of the same name, creating it when missing.
+    /// The writer's copy in Assets/Scenario is the source, so a whole chapter can be revised in one pass.
+    /// </summary>
+    [MenuItem("Yobitsugi/Scenario/Import All Scenario CSV")]
+    public static void ImportAll()
+    {
+        if (!Directory.Exists(CsvFolder))
+        {
+            Debug.LogWarning($"{CsvFolder} がありません。");
+            return;
+        }
+
+        const string scenesFolder = "Assets/Resources/VNScenes";
+        Directory.CreateDirectory(scenesFolder);
+
+        int imported = 0, created = 0, lines = 0;
+        foreach (var path in Directory.GetFiles(CsvFolder, "*.csv"))
+        {
+            string id = Path.GetFileNameWithoutExtension(path);
+            string assetPath = $"{scenesFolder}/{id}.asset";
+
+            var scene = AssetDatabase.LoadAssetAtPath<VNScene>(assetPath);
+            if (scene == null)
+            {
+                scene = ScriptableObject.CreateInstance<VNScene>();
+                AssetDatabase.CreateAsset(scene, assetPath);
+                created++;
+            }
+
+            scene.lines = ReadLines(File.ReadAllText(path));
+            lines += scene.lines.Length;
+            EditorUtility.SetDirty(scene);
+            imported++;
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"シナリオ取り込み: {imported} シーン ({created} 件は新規) / 合計 {lines} 行");
+    }
+
     [MenuItem("Yobitsugi/Scenario/Import CSV into Selected VN Scene")]
     public static void Import()
     {
@@ -86,14 +127,26 @@ public static class ScenarioCsvTool
         string path = EditorUtility.OpenFilePanel("シナリオCSVを選択", CsvFolder, "csv");
         if (string.IsNullOrEmpty(path)) return;
 
-        var rows = ParseCsv(File.ReadAllText(path));
-        if (rows.Count <= 1)
+        var lines = ReadLines(File.ReadAllText(path));
+        if (lines.Length == 0)
         {
             Debug.LogWarning("CSV に行がありません。");
             return;
         }
 
+        Undo.RecordObject(scene, "Import scenario CSV");
+        scene.lines = lines;
+        EditorUtility.SetDirty(scene);
+        AssetDatabase.SaveAssets();
+
+        Debug.Log($"シナリオを取り込みました: {scene.SceneId} ← {Path.GetFileName(path)} ({lines.Length} 行)");
+    }
+
+    private static VNLine[] ReadLines(string csv)
+    {
+        var rows = ParseCsv(csv);
         var lines = new List<VNLine>();
+
         for (int r = 1; r < rows.Count; r++)
         {
             var row = rows[r];
@@ -120,12 +173,7 @@ public static class ScenarioCsvTool
             lines.Add(line);
         }
 
-        Undo.RecordObject(scene, "Import scenario CSV");
-        scene.lines = lines.ToArray();
-        EditorUtility.SetDirty(scene);
-        AssetDatabase.SaveAssets();
-
-        Debug.Log($"シナリオを取り込みました: {scene.SceneId} ← {Path.GetFileName(path)} ({lines.Count} 行)");
+        return lines.ToArray();
     }
 
     private static void AddChoice(List<VNChoice> choices, string text, string next, string flag)
