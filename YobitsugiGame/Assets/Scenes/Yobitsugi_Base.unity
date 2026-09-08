@@ -451,6 +451,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 4438248394458206678, guid: 41505fef732f8014ebc40e073c052408, type: 3}
+      propertyPath: interactableMask.m_Bits
+      value: 55
+      objectReference: {fileID: 0}
     - target: {fileID: 6494168858549500633, guid: 41505fef732f8014ebc40e073c052408, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1433,6 +1437,10 @@ MonoBehaviour:
   clueClip: {fileID: 0}
   saveClip: {fileID: 0}
   sfxVolume: 0.7
+  typingClips: []
+  typingVolume: 0.5
+  typingMinInterval: 0.045
+  reactionVolume: 0.85
   voiceVolume: 1
   voiceDucking: 0.5
 --- !u!1 &657285147

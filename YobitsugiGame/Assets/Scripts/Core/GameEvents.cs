@@ -18,6 +18,12 @@ namespace Yobitsugi.Core
         public static event Action<int> OnSaveCompleted;
         public static event Action<int> OnLoadCompleted;
 
+        /// <summary>Raised once per non-whitespace glyph as the typewriter reveals dialogue text.</summary>
+        public static event Action OnDialogueCharacterRevealed;
+
+        /// <summary>A character's expression changed on stage (entrance or SetExpression), with the expression key shown.</summary>
+        public static event Action<CharacterDefinition, string> OnCharacterReaction;
+
         public static void RaiseVNSceneStarted(VNScene scene) => OnVNSceneStarted?.Invoke(scene);
         public static void RaiseVNSceneEnded(VNScene scene) => OnVNSceneEnded?.Invoke(scene);
         public static void RaiseVNLineShown(string speaker, string text) => OnVNLineShown?.Invoke(speaker, text);
@@ -26,6 +32,8 @@ namespace Yobitsugi.Core
         public static void RaiseClueCollected(string clueId) => OnClueCollected?.Invoke(clueId);
         public static void RaiseSaveCompleted(int slot) => OnSaveCompleted?.Invoke(slot);
         public static void RaiseLoadCompleted(int slot) => OnLoadCompleted?.Invoke(slot);
+        public static void RaiseDialogueCharacterRevealed() => OnDialogueCharacterRevealed?.Invoke();
+        public static void RaiseCharacterReaction(CharacterDefinition character, string expressionKey) => OnCharacterReaction?.Invoke(character, expressionKey);
 
         // Static events outlive play sessions when domain reload is disabled, so clear them on every play.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -39,6 +47,8 @@ namespace Yobitsugi.Core
             OnClueCollected = null;
             OnSaveCompleted = null;
             OnLoadCompleted = null;
+            OnDialogueCharacterRevealed = null;
+            OnCharacterReaction = null;
         }
     }
 }

@@ -40,6 +40,18 @@ namespace Yobitsugi.Audio
         [SerializeField] private AudioClip saveClip;
         [SerializeField, Range(0f, 1f)] private float sfxVolume = 0.7f;
 
+        [Header("Typing SFX")]
+        [Tooltip("Clips played (one at random) per non-whitespace glyph revealed by the typewriter. Pick a set from Assets/DialogTextSFX or DialogTextVolumeII.")]
+        [SerializeField] private AudioClip[] typingClips;
+        [SerializeField, Range(0f, 1f)] private float typingVolume = 0.5f;
+        [Tooltip("Minimum time between typing blips, so a fast typewriter does not turn into a buzz.")]
+        [SerializeField] private float typingMinInterval = 0.045f;
+        private float lastTypingPlayTime = -999f;
+
+        [Header("Character Reactions")]
+        [Tooltip("Random Boy/Girl reaction bark played when a character's expression changes on stage.")]
+        [SerializeField, Range(0f, 1f)] private float reactionVolume = 0.85f;
+
         [Header("Voice")]
         [SerializeField, Range(0f, 1f)] private float voiceVolume = 1f;
         [Tooltip("Duck music and ambience by this factor while a line is voiced.")]
@@ -48,19 +60,25 @@ namespace Yobitsugi.Audio
         private void OnEnable()
         {
             GameEvents.OnModeChanged += HandleModeChanged;
+            GameEvents.OnVNSceneStarted += HandleSceneStarted;
             GameEvents.OnVNLineShown += HandleLineShown;
             GameEvents.OnVoiceRequested += HandleVoiceRequested;
             GameEvents.OnClueCollected += HandleClueCollected;
             GameEvents.OnSaveCompleted += HandleSaveCompleted;
+            GameEvents.OnDialogueCharacterRevealed += HandleDialogueCharacterRevealed;
+            GameEvents.OnCharacterReaction += HandleCharacterReaction;
         }
 
         private void OnDisable()
         {
             GameEvents.OnModeChanged -= HandleModeChanged;
+            GameEvents.OnVNSceneStarted -= HandleSceneStarted;
             GameEvents.OnVNLineShown -= HandleLineShown;
             GameEvents.OnVoiceRequested -= HandleVoiceRequested;
             GameEvents.OnClueCollected -= HandleClueCollected;
             GameEvents.OnSaveCompleted -= HandleSaveCompleted;
+            GameEvents.OnDialogueCharacterRevealed -= HandleDialogueCharacterRevealed;
+            GameEvents.OnCharacterReaction -= HandleCharacterReaction;
         }
 
         /// <summary>Plays a line's voice, cutting the previous take. A null clip just stops playback.</summary>
@@ -98,13 +116,38 @@ namespace Yobitsugi.Audio
 
         private void HandleModeChanged(bool isInVN)
         {
-            CrossfadeTo(musicSource, isInVN ? vnMusic : null, musicVolume);
+            // Entering VN: HandleSceneStarted picks the track (per-scene override or the vnMusic default).
+            if (!isInVN) CrossfadeTo(musicSource, null, musicVolume);
             CrossfadeTo(ambienceSource, isInVN ? null : explorationAmbience, ambienceVolume);
+        }
+
+        /// <summary>Each VN scene may override the default track, so chapters can carry their own BGM.</summary>
+        private void HandleSceneStarted(VNScene scene)
+        {
+            var clip = scene != null && scene.music != null ? scene.music : vnMusic;
+            CrossfadeTo(musicSource, clip, musicVolume);
         }
 
         private void HandleLineShown(string speaker, string text) => PlaySfx(lineAdvanceClip);
         private void HandleClueCollected(string clueId) => PlaySfx(clueClip);
         private void HandleSaveCompleted(int slot) => PlaySfx(saveClip);
+
+        private void HandleDialogueCharacterRevealed()
+        {
+            if (typingClips == null || typingClips.Length == 0 || sfxSource == null) return;
+            if (Time.unscaledTime - lastTypingPlayTime < typingMinInterval) return;
+
+            lastTypingPlayTime = Time.unscaledTime;
+            sfxSource.PlayOneShot(typingClips[Random.Range(0, typingClips.Length)], typingVolume);
+        }
+
+        private void HandleCharacterReaction(CharacterDefinition character, string expressionKey)
+        {
+            if (character == null || sfxSource == null) return;
+
+            var clip = VNReactionLibrary.FindReaction(character.reactionVoice, expressionKey);
+            if (clip != null) sfxSource.PlayOneShot(clip, reactionVolume);
+        }
 
         private void PlaySfx(AudioClip clip)
         {

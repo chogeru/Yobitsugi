@@ -59,3 +59,4 @@ MonoBehaviour:
     requiredFlag: 
     forbiddenFlag: 
   nextScene: {fileID: 0}
+  music: {fileID: 0}

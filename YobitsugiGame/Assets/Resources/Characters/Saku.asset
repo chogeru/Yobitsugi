@@ -15,6 +15,7 @@ MonoBehaviour:
   characterId: Saku
   displayName: "\u6714"
   nameColor: {r: 0.38, g: 0.8, b: 0.74, a: 1}
+  reactionVoice: 1
   expressions:
   - sprite: {fileID: 21300000, guid: b27080c4496b4b44da7c48b59323ded9, type: 3}
     key: angry

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using Yobitsugi.Core;
 #if ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
@@ -136,6 +137,8 @@ namespace Yobitsugi.VisualNovel
                 return;
             }
 
+            GameEvents.RaiseCharacterReaction(command.character, command.expression);
+
             DOTween.Kill(root);
             switch (command.transition)
             {
@@ -222,6 +225,9 @@ namespace Yobitsugi.VisualNovel
             if (sprite == null || sprite == portrait.Image.sprite) return;
 
             portrait.Expression = command.expression;
+
+            if (!instant)
+                GameEvents.RaiseCharacterReaction(command.character, command.expression);
 
             if (instant || expressionCrossfade <= 0f)
             {

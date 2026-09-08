@@ -21,6 +21,9 @@ namespace Yobitsugi.VisualNovel
         public string key = "normal";
     }
 
+    /// <summary>Which reaction voice bank (Assets/Resources/Reactions/&lt;Boy|Girl&gt;) this character draws from.</summary>
+    public enum ReactionVoice { None, Boy, Girl }
+
     /// <summary>One speaking character: display name, name colour and the portrait set used on stage.</summary>
     [CreateAssetMenu(menuName = "Yobitsugi/Character", fileName = "New Character")]
     public class CharacterDefinition : ScriptableObject
@@ -37,6 +40,12 @@ namespace Yobitsugi.VisualNovel
         [BoxGroup("表示"), LabelText("名前の色")]
 #endif
         public Color nameColor = Color.white;
+
+        [Tooltip("Reaction voice bank used for emotion SFX when an expression changes on stage. None plays nothing.")]
+#if ODIN_INSPECTOR
+        [BoxGroup("表示"), LabelText("リアクションボイス")]
+#endif
+        public ReactionVoice reactionVoice = ReactionVoice.None;
 
 #if ODIN_INSPECTOR
         [BoxGroup("立ち絵"), LabelText("表情"), ListDrawerSettings(DefaultExpandedState = true)]

@@ -25,6 +25,12 @@ namespace Yobitsugi.VisualNovel
 #endif
         public VNScene nextScene;
 
+        [Tooltip("Optional: crossfades to this track when the scene starts. Leave empty to keep AudioService's default VN music.")]
+#if ODIN_INSPECTOR
+        [BoxGroup("シナリオ"), LabelText("このシーンのBGM(任意)")]
+#endif
+        public AudioClip music;
+
         public string SceneId => string.IsNullOrEmpty(sceneId) ? name : sceneId;
 
 #if ODIN_INSPECTOR

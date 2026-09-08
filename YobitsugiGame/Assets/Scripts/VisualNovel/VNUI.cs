@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Yobitsugi.Core;
 
 namespace Yobitsugi.VisualNovel
 {
@@ -141,10 +142,28 @@ namespace Yobitsugi.VisualNovel
             dialogueText.ForceMeshUpdate();
 
             int total = dialogueText.textInfo.characterCount;
-            return DOVirtual.Int(0, total, duration, value => dialogueText.maxVisibleCharacters = value)
+            int revealed = 0;
+
+            return DOVirtual.Int(0, total, duration, value =>
+                {
+                    dialogueText.maxVisibleCharacters = value;
+                    RaiseTypingSfxFor(revealed, value);
+                    revealed = value;
+                })
                 .SetEase(Ease.Linear)
                 .OnComplete(() => dialogueText.maxVisibleCharacters = int.MaxValue)
                 .SetLink(gameObject);
+        }
+
+        /// <summary>Raises one typing-SFX event per non-whitespace glyph revealed since the last tween step.</summary>
+        private void RaiseTypingSfxFor(int from, int to)
+        {
+            var info = dialogueText.textInfo;
+            for (int i = from; i < to && i < info.characterCount; i++)
+            {
+                if (!char.IsWhiteSpace(info.characterInfo[i].character))
+                    GameEvents.RaiseDialogueCharacterRevealed();
+            }
         }
 
         public void SetNextIndicatorVisible(bool visible)

@@ -1,0 +1,29 @@
+fileFormatVersion: 2
+guid: 2a52b8f79d3ddf4499ec975becf71daf
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 6
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 267178
+  packageName: Dialog Text - Volume II
+  packageVersion: 1.0
+  assetPath: Assets/DialogTextVolumeII/Cute/Collection2/SFX_CuteC203.wav
+  uploadId: 765916
