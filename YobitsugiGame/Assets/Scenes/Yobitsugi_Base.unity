@@ -1428,8 +1428,8 @@ MonoBehaviour:
   ambienceSource: {fileID: 1908023411}
   sfxSource: {fileID: 1791176109}
   voiceSource: {fileID: 284221238}
-  vnMusic: {fileID: 0}
-  explorationAmbience: {fileID: 0}
+  vnMusic: {fileID: 8300000, guid: cbd95970e6f53cf418a21bd32cd56cb8, type: 3}
+  explorationAmbience: {fileID: 8300000, guid: f0d6432c5a1edbd428c5a6860fd468c8, type: 3}
   musicFade: 1.2
   musicVolume: 0.5
   ambienceVolume: 0.4
@@ -1437,7 +1437,13 @@ MonoBehaviour:
   clueClip: {fileID: 0}
   saveClip: {fileID: 0}
   sfxVolume: 0.7
-  typingClips: []
+  typingClips:
+  - {fileID: 8300000, guid: 8d9a0e13de3702c4db34b4ba7f035a0f, type: 3}
+  - {fileID: 8300000, guid: 757428a2dedd1df4ab05b621bd38dda0, type: 3}
+  - {fileID: 8300000, guid: 1c46d7402af8cc94ea6b7a5e11ada65a, type: 3}
+  - {fileID: 8300000, guid: 3f63d4821b8395d4eac59a62dc9d4e1c, type: 3}
+  - {fileID: 8300000, guid: 6da96bfcc72e3df4281972099477d65d, type: 3}
+  - {fileID: 8300000, guid: 06640d497b29ba54aa686064619af1e6, type: 3}
   typingVolume: 0.5
   typingMinInterval: 0.045
   reactionVolume: 0.85
