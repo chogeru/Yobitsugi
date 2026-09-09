@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using Yobitsugi.Core;
@@ -12,11 +11,9 @@ namespace Yobitsugi.UI
     /// </summary>
     public class TitleScreenController : MonoBehaviour
     {
-        [SerializeField] private CanvasGroup canvasGroup;
         [SerializeField] private Button startButton;
         [SerializeField] private Button continueButton;
         [SerializeField] private Button quitButton;
-        [SerializeField] private float fadeOutDuration = 0.6f;
 
         [SerializeField] private GameModeManager gameModeManager;
         [SerializeField] private SaveCoordinator saveCoordinator;
@@ -45,14 +42,14 @@ namespace Yobitsugi.UI
             Cursor.visible = true;
         }
 
-        private void HandleStart() => Dismiss(() => gameModeManager.BeginGame());
+        private void HandleStart() => DismissAsync(() => gameModeManager.BeginGame()).Forget();
 
         private void HandleContinue()
         {
             int slot = FindMostRecentSlot();
             if (slot == int.MinValue) return;
 
-            Dismiss(() => saveCoordinator.Load(slot));
+            DismissAsync(() => saveCoordinator.Load(slot)).Forget();
         }
 
         private void HandleQuit()
@@ -87,26 +84,33 @@ namespace Yobitsugi.UI
             return bestSlot;
         }
 
-        private void Dismiss(System.Action onHidden)
+        /// <summary>
+        /// Covers the screen in black FIRST, then hides the title and hands off — rather than fading the
+        /// title out on its own timeline and only starting the black transition afterward, which left a
+        /// gap where the already-loaded 3D exploration scene flashed through behind the disappearing title.
+        /// </summary>
+        private async UniTaskVoid DismissAsync(System.Action onHidden)
         {
             if (startButton != null) startButton.interactable = false;
             if (continueButton != null) continueButton.interactable = false;
             if (quitButton != null) quitButton.interactable = false;
 
-            if (canvasGroup == null)
-            {
-                gameObject.SetActive(false);
-                onHidden?.Invoke();
-                return;
-            }
+            IScreenFader fader = ScreenFader.Instance;
+            if (fader != null)
+                await fader.FadeOutAsync();
 
-            canvasGroup.blocksRaycasts = false;
-            DOTween.To(() => canvasGroup.alpha, a => canvasGroup.alpha = a, 0f, fadeOutDuration)
-                .OnComplete(() =>
-                {
-                    gameObject.SetActive(false);
-                    onHidden?.Invoke();
-                });
+            // Let at least one fully-black frame actually render before touching anything else — Restore()
+            // teleports the player and toggles world objects in the same tick, and without this gap that
+            // occasionally slipped through as a one-frame flash of the 3D scene before the black caught up.
+            await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+            await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+
+            // The screen is now fully black: safe to swap without anything showing through. Tell
+            // GameModeManager not to fade to black again on top of this — it would just hold an extra
+            // ~0.3s at black for no visual reason before finally applying VN/exploration mode.
+            gameModeManager.SkipNextTransition();
+            gameObject.SetActive(false);
+            onHidden?.Invoke();
         }
     }
 }

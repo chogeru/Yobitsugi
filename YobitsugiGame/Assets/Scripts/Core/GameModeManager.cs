@@ -44,6 +44,9 @@ namespace Yobitsugi.Core
 
         public int SaveOrder => 10;
 
+        /// <summary>Set by SkipNextTransition when a caller has already faded the screen to black itself.</summary>
+        private bool skipNextTransition;
+
         private void Awake()
         {
             Instance = this;
@@ -99,10 +102,26 @@ namespace Yobitsugi.Core
 
         private void ExitVN() => RunTransition(ApplyExplorationMode);
 
+        /// <summary>
+        /// Marks the next EnterVN/PlayVNAsync/Restore call as already covered by black (e.g. the title screen's
+        /// own fade-out), so it applies the mode instantly instead of fading to black a second time in a row.
+        /// </summary>
+        public void SkipNextTransition() => skipNextTransition = true;
+
         /// <summary>Fades through black when a fader is present, otherwise switches instantly.</summary>
-        private static void RunTransition(Action atBlack)
+        private void RunTransition(Action atBlack)
         {
             IScreenFader fader = ScreenFader.Instance;
+
+            if (skipNextTransition)
+            {
+                skipNextTransition = false;
+                atBlack();
+                // The caller already faded to black itself; this only needs to reveal what atBlack just set up.
+                fader?.FadeInAsync().Forget();
+                return;
+            }
+
             if (fader != null)
                 fader.Transition(atBlack);
             else
