@@ -14,6 +14,12 @@ namespace Yobitsugi.Audio
     /// </summary>
     public class AudioService : MonoBehaviour
     {
+        public static AudioService Instance { get; private set; }
+
+        private const string PrefMusicVolume = "audio.music_volume";
+        private const string PrefSfxVolume = "audio.sfx_volume";
+        private const string PrefVoiceVolume = "audio.voice_volume";
+
 #if ODIN_INSPECTOR
         [Title("サウンド", "ゲーム内イベントを購読して鳴らすだけの独立モジュール", TitleAlignments.Left)]
         [InfoBox("他のシステムはサウンドのことを一切知りません。GameEvents を購読しているだけなので、\n" +
@@ -31,6 +37,7 @@ namespace Yobitsugi.Audio
         [SerializeField] private AudioClip vnMusic;
         [SerializeField] private AudioClip explorationAmbience;
         [SerializeField] private float musicFade = 1.2f;
+        [Tooltip("Design-time mix baseline; the player's own BGM slider multiplies on top of this.")]
         [SerializeField, Range(0f, 1f)] private float musicVolume = 0.5f;
         [SerializeField, Range(0f, 1f)] private float ambienceVolume = 0.4f;
 
@@ -38,6 +45,8 @@ namespace Yobitsugi.Audio
         [SerializeField] private AudioClip lineAdvanceClip;
         [SerializeField] private AudioClip clueClip;
         [SerializeField] private AudioClip saveClip;
+        [Tooltip("Played once when GameManager.ClearGame fires; the BGM fades out to let it land.")]
+        [SerializeField] private AudioClip clearFanfareClip;
         [SerializeField, Range(0f, 1f)] private float sfxVolume = 0.7f;
 
         [Header("Typing SFX")]
@@ -57,6 +66,36 @@ namespace Yobitsugi.Audio
         [Tooltip("Duck music and ambience by this factor while a line is voiced.")]
         [SerializeField, Range(0f, 1f)] private float voiceDucking = 0.5f;
 
+        [Header("User Volume (persisted across sessions)")]
+        [SerializeField, Range(0f, 1f)] private float userMusicVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float userSfxVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float userVoiceVolume = 1f;
+
+        public float UserMusicVolume => userMusicVolume;
+        public float UserSfxVolume => userSfxVolume;
+        public float UserVoiceVolume => userVoiceVolume;
+
+        private float EffectiveMusicVolume => musicVolume * userMusicVolume;
+        private float EffectiveAmbienceVolume => ambienceVolume * userMusicVolume;
+        private float EffectiveSfxVolume => sfxVolume * userSfxVolume;
+        private float EffectiveTypingVolume => typingVolume * userSfxVolume;
+        private float EffectiveReactionVolume => reactionVolume * userSfxVolume;
+        private float EffectiveVoiceVolume => voiceVolume * userVoiceVolume;
+
+        private void Awake()
+        {
+            Instance = this;
+
+            userMusicVolume = PlayerPrefs.GetFloat(PrefMusicVolume, userMusicVolume);
+            userSfxVolume = PlayerPrefs.GetFloat(PrefSfxVolume, userSfxVolume);
+            userVoiceVolume = PlayerPrefs.GetFloat(PrefVoiceVolume, userVoiceVolume);
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
+
         private void OnEnable()
         {
             GameEvents.OnModeChanged += HandleModeChanged;
@@ -67,6 +106,7 @@ namespace Yobitsugi.Audio
             GameEvents.OnSaveCompleted += HandleSaveCompleted;
             GameEvents.OnDialogueCharacterRevealed += HandleDialogueCharacterRevealed;
             GameEvents.OnCharacterReaction += HandleCharacterReaction;
+            GameEvents.OnGameCleared += HandleGameCleared;
         }
 
         private void OnDisable()
@@ -79,6 +119,32 @@ namespace Yobitsugi.Audio
             GameEvents.OnSaveCompleted -= HandleSaveCompleted;
             GameEvents.OnDialogueCharacterRevealed -= HandleDialogueCharacterRevealed;
             GameEvents.OnCharacterReaction -= HandleCharacterReaction;
+            GameEvents.OnGameCleared -= HandleGameCleared;
+        }
+
+        // --- User volume (system menu sliders) ---
+
+        public void SetUserMusicVolume(float value)
+        {
+            userMusicVolume = Mathf.Clamp01(value);
+            PlayerPrefs.SetFloat(PrefMusicVolume, userMusicVolume);
+
+            ApplyDucking(voiceSource != null && voiceSource.isPlaying);
+        }
+
+        public void SetUserSfxVolume(float value)
+        {
+            userSfxVolume = Mathf.Clamp01(value);
+            PlayerPrefs.SetFloat(PrefSfxVolume, userSfxVolume);
+        }
+
+        public void SetUserVoiceVolume(float value)
+        {
+            userVoiceVolume = Mathf.Clamp01(value);
+            PlayerPrefs.SetFloat(PrefVoiceVolume, userVoiceVolume);
+
+            if (voiceSource != null && voiceSource.isPlaying)
+                voiceSource.volume = EffectiveVoiceVolume;
         }
 
         /// <summary>Plays a line's voice, cutting the previous take. A null clip just stops playback.</summary>
@@ -91,7 +157,7 @@ namespace Yobitsugi.Audio
 
             if (clip != null)
             {
-                voiceSource.volume = voiceVolume;
+                voiceSource.volume = EffectiveVoiceVolume;
                 voiceSource.Play();
             }
 
@@ -102,8 +168,8 @@ namespace Yobitsugi.Audio
         {
             float factor = voicePlaying ? voiceDucking : 1f;
 
-            DuckSource(musicSource, musicVolume * factor);
-            DuckSource(ambienceSource, ambienceVolume * factor);
+            DuckSource(musicSource, EffectiveMusicVolume * factor);
+            DuckSource(ambienceSource, EffectiveAmbienceVolume * factor);
         }
 
         private void DuckSource(AudioSource source, float target)
@@ -117,20 +183,27 @@ namespace Yobitsugi.Audio
         private void HandleModeChanged(bool isInVN)
         {
             // Entering VN: HandleSceneStarted picks the track (per-scene override or the vnMusic default).
-            if (!isInVN) CrossfadeTo(musicSource, null, musicVolume);
-            CrossfadeTo(ambienceSource, isInVN ? null : explorationAmbience, ambienceVolume);
+            if (!isInVN) CrossfadeTo(musicSource, null, EffectiveMusicVolume);
+            CrossfadeTo(ambienceSource, isInVN ? null : explorationAmbience, EffectiveAmbienceVolume);
         }
 
         /// <summary>Each VN scene may override the default track, so chapters can carry their own BGM.</summary>
         private void HandleSceneStarted(VNScene scene)
         {
             var clip = scene != null && scene.music != null ? scene.music : vnMusic;
-            CrossfadeTo(musicSource, clip, musicVolume);
+            CrossfadeTo(musicSource, clip, EffectiveMusicVolume);
         }
 
-        private void HandleLineShown(string speaker, string text) => PlaySfx(lineAdvanceClip);
+        private void HandleLineShown(string speaker, string text, AudioClip voice) => PlaySfx(lineAdvanceClip);
         private void HandleClueCollected(string clueId) => PlaySfx(clueClip);
         private void HandleSaveCompleted(int slot) => PlaySfx(saveClip);
+
+        /// <summary>The moment deserves quiet: fade the BGM out from under the fanfare instead of layering them.</summary>
+        private void HandleGameCleared()
+        {
+            CrossfadeTo(musicSource, null, EffectiveMusicVolume);
+            PlaySfx(clearFanfareClip);
+        }
 
         private void HandleDialogueCharacterRevealed()
         {
@@ -138,7 +211,7 @@ namespace Yobitsugi.Audio
             if (Time.unscaledTime - lastTypingPlayTime < typingMinInterval) return;
 
             lastTypingPlayTime = Time.unscaledTime;
-            sfxSource.PlayOneShot(typingClips[Random.Range(0, typingClips.Length)], typingVolume);
+            sfxSource.PlayOneShot(typingClips[Random.Range(0, typingClips.Length)], EffectiveTypingVolume);
         }
 
         private void HandleCharacterReaction(CharacterDefinition character, string expressionKey)
@@ -146,13 +219,13 @@ namespace Yobitsugi.Audio
             if (character == null || sfxSource == null) return;
 
             var clip = VNReactionLibrary.FindReaction(character.reactionVoice, expressionKey);
-            if (clip != null) sfxSource.PlayOneShot(clip, reactionVolume);
+            if (clip != null) sfxSource.PlayOneShot(clip, EffectiveReactionVolume);
         }
 
         private void PlaySfx(AudioClip clip)
         {
             if (clip == null || sfxSource == null) return;
-            sfxSource.PlayOneShot(clip, sfxVolume);
+            sfxSource.PlayOneShot(clip, EffectiveSfxVolume);
         }
 
         private void CrossfadeTo(AudioSource source, AudioClip clip, float targetVolume)

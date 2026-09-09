@@ -254,7 +254,7 @@ namespace Yobitsugi.VisualNovel
             }
             portraits?.SetSpeaking(line.character, false);
 
-            GameEvents.RaiseVNLineShown(line.SpeakerName, line.text);
+            GameEvents.RaiseVNLineShown(line.SpeakerName, line.text, line.voice);
 
             // Skip mode races past lines, so voice would only ever be cut off mid-word.
             GameEvents.RaiseVoiceRequested(SkipMode ? null : line.voice);
@@ -282,8 +282,12 @@ namespace Yobitsugi.VisualNovel
         /// <summary>Snaps the typewriter to the full line; the tween's completion callback carries on from there.</summary>
         private void CompleteTyping()
         {
+            // DOTween's Complete() defaults withCallbacks to false, so without the explicit `true` the
+            // OnComplete that clears isTyping and shows the next indicator never runs — every click while
+            // text is typing (i.e. clicking to skip the typewriter, the most common click of all) would
+            // permanently stick the presenter in isTyping, and no further click could ever advance the scene.
             if (typeTween != null && typeTween.IsActive())
-                typeTween.Complete();
+                typeTween.Complete(true);
         }
 
         private void OnLineFullyShown(VNLine line)

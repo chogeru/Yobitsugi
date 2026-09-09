@@ -54,26 +54,39 @@ namespace Yobitsugi.UI
                 .SetUpdate(true);
         }
 
-        public UniTask FadeOutAsync(float duration = -1f, CancellationToken cancellationToken = default)
-        {
-            canvasGroup.blocksRaycasts = true;
-            return FadeAsync(1f, duration, cancellationToken);
-        }
+        public UniTask FadeOutAsync(float duration = -1f, CancellationToken cancellationToken = default) =>
+            FadeAsync(1f, duration, blocksDuring: true, blocksAtEnd: true, cancellationToken);
 
-        public async UniTask FadeInAsync(float duration = -1f, CancellationToken cancellationToken = default)
-        {
-            await FadeAsync(0f, duration, cancellationToken);
-            canvasGroup.blocksRaycasts = false;
-        }
+        /// <summary>
+        /// Fading in reveals whatever is already sitting underneath (a title screen, the just-restored gameplay);
+        /// there is nothing there worth protecting from a click, so — unlike FadeOutAsync — this never blocks
+        /// input, letting an impatient click through instead of being silently eaten for the fade's duration.
+        /// </summary>
+        public UniTask FadeInAsync(float duration = -1f, CancellationToken cancellationToken = default) =>
+            FadeAsync(0f, duration, blocksDuring: false, blocksAtEnd: false, cancellationToken);
 
-        private UniTask FadeAsync(float target, float duration, CancellationToken cancellationToken)
+        /// <summary>
+        /// Sets blocksRaycasts from OnKill rather than after the awaited task, so a fade that gets cancelled
+        /// mid-flight (e.g. a sequence step interrupted by scene teardown) still settles the raycast block
+        /// instead of leaving an invisible full-screen click-eater behind.
+        /// </summary>
+        private UniTask FadeAsync(float target, float duration, bool blocksDuring, bool blocksAtEnd, CancellationToken cancellationToken)
         {
             FinishRunning();
-            running = DOTween.Sequence()
+            canvasGroup.blocksRaycasts = blocksDuring;
+
+            var sequence = DOTween.Sequence()
                 .Append(canvasGroup.DOFade(target, Resolve(duration)).SetEase(Ease.InOutQuad))
                 .SetUpdate(true);
 
-            return running.ToUniTask(cancellationToken: cancellationToken);
+            sequence.OnKill(() =>
+            {
+                canvasGroup.blocksRaycasts = blocksAtEnd;
+                if (running == sequence) running = null;
+            });
+
+            running = sequence;
+            return sequence.ToUniTask(cancellationToken: cancellationToken);
         }
 
         /// <summary>Runs an in-flight transition to its end (callbacks included) so no mode switch is lost.</summary>

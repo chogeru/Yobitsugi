@@ -22,7 +22,10 @@ namespace Yobitsugi.Interactables
             get
             {
                 if (isOpen) return "閉める";
-                return IsUnlocked ? "開ける" : "鍵がかかっている";
+                if (IsUnlocked) return "開ける";
+
+                int remaining = requiredClueCount - (GameManager.Instance != null ? GameManager.Instance.ClueCount : 0);
+                return remaining > 0 ? $"鍵がかかっている(あと{remaining}つ手がかりが必要)" : "鍵がかかっている";
             }
         }
 

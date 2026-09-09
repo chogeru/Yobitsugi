@@ -16,6 +16,10 @@ namespace Yobitsugi.UI
         event Action RestartRequested;
         event Action BackRequested;
         event Action<int> SlotSelected;
+        event Action AutoSlotSelected;
+
+        /// <summary>A voiced backlog line was clicked; the payload is that entry's index into VNBacklog.Entries.</summary>
+        event Action<int> BacklogEntryClicked;
 
         int SlotCount { get; }
 
@@ -25,5 +29,8 @@ namespace Yobitsugi.UI
         void SetBacklogText(string text);
         void SetSlotsTitle(string title);
         void SetSlot(int index, string label, bool interactable);
+
+        /// <summary>The reserved autosave slot: shown only when loading (never a manual save target).</summary>
+        void SetAutoSlot(string label, bool interactable, bool visible);
     }
 }

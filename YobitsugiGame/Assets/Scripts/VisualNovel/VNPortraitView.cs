@@ -56,6 +56,9 @@ namespace Yobitsugi.VisualNovel
         [SerializeField] private float expressionCrossfade = 0.15f;
         [SerializeField] private float slideDistance = 160f;
         [SerializeField] private float emoteStrength = 24f;
+        [Tooltip("A tiny dip held for a beat before a character exits, so leaving reads as a choice rather than a cut.")]
+        [SerializeField] private float exitSettleDistance = 10f;
+        [SerializeField] private float exitSettleDuration = 0.12f;
 
         [Header("Speaker highlight")]
         [SerializeField] private Color speakingTint = Color.white;
@@ -197,19 +200,23 @@ namespace Yobitsugi.VisualNovel
             DOTween.Kill(root);
 
             var sequence = DOTween.Sequence().SetLink(root.gameObject);
+
+            if (exitSettleDistance > 0f && exitSettleDuration > 0f)
+                sequence.Append(root.DOAnchorPosY(root.anchoredPosition.y - exitSettleDistance, exitSettleDuration).SetEase(Ease.InOutSine));
+
             switch (command.transition)
             {
                 case PortraitTransition.SlideFromEdge:
                     float to = portrait.Slot <= PortraitSlot.CenterLeft ? -slideDistance : slideDistance;
-                    sequence.Join(root.DOAnchorPos(root.anchoredPosition + new Vector2(to, 0f), exitDuration).SetEase(Ease.InCubic));
+                    sequence.Append(root.DOAnchorPos(root.anchoredPosition + new Vector2(to, 0f), exitDuration).SetEase(Ease.InCubic));
                     break;
 
                 case PortraitTransition.Pop:
-                    sequence.Join(root.DOScale(root.localScale * 0.9f, exitDuration).SetEase(Ease.InBack));
+                    sequence.Append(root.DOScale(root.localScale * 0.9f, exitDuration).SetEase(Ease.InBack));
                     break;
 
                 default:
-                    sequence.Join(root.DOAnchorPos(root.anchoredPosition - new Vector2(0f, 26f), exitDuration).SetEase(Ease.InCubic));
+                    sequence.Append(root.DOAnchorPos(root.anchoredPosition - new Vector2(0f, 26f), exitDuration).SetEase(Ease.InCubic));
                     break;
             }
 

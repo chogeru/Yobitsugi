@@ -77,4 +77,17 @@ namespace Yobitsugi.Sequences
             return UniTask.CompletedTask;
         }
     }
+
+    [Serializable]
+    public class ScreenShakeStep : SequenceStep
+    {
+        [SerializeField] private float duration = 0.4f;
+        [SerializeField, Range(0f, 100f)] private float strength = 30f;
+
+        public override UniTask ExecuteAsync(SequenceContext context, CancellationToken cancellationToken)
+        {
+            Yobitsugi.Core.GameEvents.RaiseScreenShakeRequested(duration, strength);
+            return UniTask.CompletedTask;
+        }
+    }
 }

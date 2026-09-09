@@ -35,6 +35,11 @@ namespace Yobitsugi.VisualNovel
         [SerializeField] private float choiceFadeIn = 0.25f;
         [SerializeField] private float choiceStagger = 0.07f;
         [SerializeField] private float choiceEnterScale = 0.85f;
+        [Tooltip("Time the clicked choice gets to visibly confirm before the scenario actually advances.")]
+        [SerializeField] private float choiceSelectDuration = 0.15f;
+        [Tooltip("Slow zoom applied to the background for as long as it's on screen, so scenes never look static.")]
+        [SerializeField] private float backgroundZoom = 1.06f;
+        [SerializeField] private float backgroundZoomDuration = 10f;
 
         private readonly List<Button> spawnedChoices = new List<Button>();
         private InputAction submitAction;
@@ -50,6 +55,8 @@ namespace Yobitsugi.VisualNovel
 
         private void OnEnable()
         {
+            GameEvents.OnScreenShakeRequested += HandleShakeRequested;
+
             if (submitAction == null) return;
 
             submitAction.Enable();
@@ -58,8 +65,21 @@ namespace Yobitsugi.VisualNovel
 
         private void OnDisable()
         {
+            GameEvents.OnScreenShakeRequested -= HandleShakeRequested;
+
             if (submitAction == null) return;
             submitAction.performed -= OnSubmit;
+            submitAction.Disable();
+        }
+
+        /// <summary>Dramatic beats shake the whole dialogue canvas, since VN runs on a screen-space overlay the 3D camera shake never reaches.</summary>
+        private void HandleShakeRequested(float duration, float strength)
+        {
+            if (root == null || !root.activeInHierarchy) return;
+
+            var rect = (RectTransform)root.transform;
+            rect.DOKill();
+            rect.DOShakeAnchorPos(duration, strength * 0.3f, 20, 90f, false, true).SetLink(gameObject);
         }
 
         private void OnSubmit(InputAction.CallbackContext context)
@@ -115,6 +135,7 @@ namespace Yobitsugi.VisualNovel
             backgroundFadeImage.sprite = backgroundImage.sprite;
             backgroundFadeImage.enabled = backgroundFadeImage.sprite != null;
             backgroundFadeImage.color = Color.white;
+            backgroundFadeImage.rectTransform.localScale = backgroundImage.rectTransform.localScale;
             backgroundImage.sprite = sprite;
 
             // The empty-state panel is tinted near-black; a sprite must render untinted or it comes out invisible.
@@ -123,6 +144,19 @@ namespace Yobitsugi.VisualNovel
             backgroundFadeImage.DOFade(0f, backgroundCrossfade)
                 .OnComplete(() => backgroundFadeImage.enabled = false)
                 .SetLink(gameObject);
+
+            StartBackgroundZoom();
+        }
+
+        /// <summary>A slow, unending zoom so a background never reads as a static slide, novel-game "Ken Burns" style.</summary>
+        private void StartBackgroundZoom()
+        {
+            var rect = backgroundImage.rectTransform;
+            DOTween.Kill(rect);
+            if (backgroundZoom <= 1f || backgroundZoomDuration <= 0f) return;
+
+            rect.localScale = Vector3.one;
+            rect.DOScale(backgroundZoom, backgroundZoomDuration).SetEase(Ease.Linear).SetLink(gameObject);
         }
 
         public void SetDialogueText(string text)
@@ -186,11 +220,37 @@ namespace Yobitsugi.VisualNovel
                 var label = button.GetComponentInChildren<TMP_Text>();
                 if (label != null) label.text = choices[i].text;
 
-                button.onClick.AddListener(() => ChoiceSelected?.Invoke(choiceIndex));
+                button.onClick.AddListener(() => AnimateChoiceSelection(choiceIndex));
                 spawnedChoices.Add(button);
 
                 PlayChoiceEntrance(button, choiceIndex * choiceStagger);
             }
+        }
+
+        /// <summary>
+        /// The chosen option grows and confirms, the rest fade away, and only then does the scenario move on —
+        /// so picking a choice reads as a decision rather than an instant cut to the next line.
+        /// </summary>
+        private void AnimateChoiceSelection(int choiceIndex)
+        {
+            foreach (var button in spawnedChoices)
+                button.interactable = false;
+
+            var sequence = DOTween.Sequence().SetLink(gameObject);
+
+            for (int i = 0; i < spawnedChoices.Count; i++)
+            {
+                var button = spawnedChoices[i];
+                var group = button.GetComponent<CanvasGroup>();
+                if (group == null) continue;
+
+                if (i == choiceIndex)
+                    sequence.Join(((RectTransform)button.transform).DOScale(1.08f, choiceSelectDuration).SetEase(Ease.OutBack));
+                else
+                    sequence.Join(group.DOFade(0.15f, choiceSelectDuration));
+            }
+
+            sequence.OnComplete(() => ChoiceSelected?.Invoke(choiceIndex));
         }
 
         private void PlayChoiceEntrance(Button button, float delay)

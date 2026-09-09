@@ -56,6 +56,15 @@ namespace Yobitsugi.Core
 
         private void Start()
         {
+            // A title screen owns the moment play begins (Start/Continue) and calls BeginGame() itself;
+            // without one, fall back to the old behavior of jumping straight in.
+            if (UnityEngine.Object.FindAnyObjectByType<Yobitsugi.UI.TitleScreenController>() == null)
+                BeginGame();
+        }
+
+        /// <summary>Starts the intro scene (or exploration if there is none). Called once, either automatically or by the title screen.</summary>
+        public void BeginGame()
+        {
             if (introScene != null)
                 EnterVN(introScene);
             else

@@ -95,6 +95,7 @@ namespace Yobitsugi.Core
             if (State != GameState.Playing) return;
             State = GameState.Cleared;
             OnGameCleared?.Invoke();
+            GameEvents.RaiseGameCleared();
         }
 
         public void RestartLevel()

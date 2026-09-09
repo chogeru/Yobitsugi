@@ -7,7 +7,12 @@ namespace Yobitsugi.Core
     {
         public const int SlotCount = 3;
 
-        private static string PathFor(int slot) => Path.Combine(Application.persistentDataPath, $"save_slot_{slot}.json");
+        /// <summary>Reserved slot the game writes to automatically; never offered as a manual save target.</summary>
+        public const int AutoSlot = -1;
+
+        private static string PathFor(int slot) => slot == AutoSlot
+            ? Path.Combine(Application.persistentDataPath, "save_auto.json")
+            : Path.Combine(Application.persistentDataPath, $"save_slot_{slot}.json");
 
         public static bool HasSave(int slot) => File.Exists(PathFor(slot));
 

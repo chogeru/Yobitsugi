@@ -13,6 +13,9 @@ namespace Yobitsugi.UI
     {
         private const int BacklogVisibleEntries = 20;
 
+        /// <summary>Marks the most recent line so the log reads as "you are here", not just a wall of past dialogue.</summary>
+        private const string LatestEntryColor = "#FFD97A";
+
         private readonly ISystemMenuView view;
         private readonly IGameModeController mode;
         private readonly VNPresenter vn;
@@ -39,6 +42,8 @@ namespace Yobitsugi.UI
             view.RestartRequested += Restart;
             view.BackRequested += GoBack;
             view.SlotSelected += SelectSlot;
+            view.AutoSlotSelected += SelectAutoSlot;
+            view.BacklogEntryClicked += ReplayBacklogVoice;
 
             view.ShowPanel(SystemMenuPanel.None);
         }
@@ -54,6 +59,8 @@ namespace Yobitsugi.UI
             view.RestartRequested -= Restart;
             view.BackRequested -= GoBack;
             view.SlotSelected -= SelectSlot;
+            view.AutoSlotSelected -= SelectAutoSlot;
+            view.BacklogEntryClicked -= ReplayBacklogVoice;
         }
 
         public void ToggleMenu()
@@ -118,13 +125,33 @@ namespace Yobitsugi.UI
 
             var builder = new StringBuilder();
             int start = Math.Max(0, entries.Count - BacklogVisibleEntries);
+            int lastIndex = entries.Count - 1;
             for (int i = start; i < entries.Count; i++)
             {
-                builder.Append(entries[i]);
-                if (i < entries.Count - 1) builder.Append("\n\n");
+                bool voiced = entries[i].Voice != null;
+                // Underline marks a line as clickable; the link id is this entry's index for ReplayBacklogVoice to look up.
+                if (voiced) builder.Append($"<link=\"{i}\"><u>");
+                if (i == lastIndex) builder.Append($"<color={LatestEntryColor}>");
+
+                builder.Append(entries[i].DisplayText);
+
+                if (i == lastIndex) builder.Append("</color>");
+                if (voiced) builder.Append("</u></link>");
+
+                if (i < lastIndex) builder.Append("\n\n");
             }
 
             return builder.ToString();
+        }
+
+        /// <summary>Reuses the normal voice pipeline (ducking included) so replaying a backlog line behaves like hearing it live.</summary>
+        private void ReplayBacklogVoice(int index)
+        {
+            var entries = VNBacklog.Entries;
+            if (index < 0 || index >= entries.Count) return;
+
+            var clip = entries[index].Voice;
+            if (clip != null) GameEvents.RaiseVoiceRequested(clip);
         }
 
         private void OpenSaveSlots()
@@ -152,6 +179,13 @@ namespace Yobitsugi.UI
                 view.SetSlot(i, label, isSaveMode || hasSave);
             }
 
+            // Autosave is never a manual save target — only ever offered when loading.
+            bool hasAutoSave = SaveSystem.HasSave(SaveSystem.AutoSlot);
+            string autoLabel = hasAutoSave
+                ? $"オートセーブ: {SaveSystem.Load(SaveSystem.AutoSlot)?.savedAtDisplay}"
+                : "オートセーブ: (空)";
+            view.SetAutoSlot(autoLabel, hasAutoSave, visible: !isSaveMode);
+
             view.ShowPanel(SystemMenuPanel.Slots);
         }
 
@@ -165,6 +199,12 @@ namespace Yobitsugi.UI
             }
 
             if (!saves.Load(index)) return;
+            CloseAll();
+        }
+
+        private void SelectAutoSlot()
+        {
+            if (isSaveMode || !saves.Load(SaveSystem.AutoSlot)) return;
             CloseAll();
         }
 

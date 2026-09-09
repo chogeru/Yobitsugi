@@ -23,9 +23,9 @@ namespace Yobitsugi.Player
                 Physics.Raycast(interactionCamera.transform.position, interactionCamera.transform.forward,
                     out RaycastHit hit, interactRange, interactableMask, QueryTriggerInteraction.Collide))
             {
+                // Keep a locked/blocked target as Current so its prompt (e.g. "鍵がかかっている") still shows —
+                // CanInteract only gates the actual interaction below, in OnInteract.
                 found = hit.collider.GetComponentInParent<IInteractable>();
-                if (found != null && !found.CanInteract(gameObject))
-                    found = null;
             }
 
             if (found != Current)
@@ -38,7 +38,8 @@ namespace Yobitsugi.Player
         public void OnInteract(InputValue value)
         {
             if (!value.isPressed) return;
-            Current?.Interact(gameObject);
+            if (Current != null && Current.CanInteract(gameObject))
+                Current.Interact(gameObject);
         }
     }
 }

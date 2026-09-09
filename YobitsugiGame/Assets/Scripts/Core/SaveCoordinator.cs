@@ -32,10 +32,16 @@ namespace Yobitsugi.Core
             Refresh();
         }
 
+        private void OnEnable() => GameEvents.OnVNSceneEnded += HandleVNSceneEnded;
+        private void OnDisable() => GameEvents.OnVNSceneEnded -= HandleVNSceneEnded;
+
         private void OnDestroy()
         {
             if (Instance == this) Instance = null;
         }
+
+        /// <summary>A VN scene finishing is a natural checkpoint, so the player never loses more than one scene's progress to a crash.</summary>
+        private void HandleVNSceneEnded(Yobitsugi.VisualNovel.VNScene scene) => Save(SaveSystem.AutoSlot);
 
         /// <summary>Re-scans the scene. Call after spawning systems that persist state.</summary>
         public void Refresh()
