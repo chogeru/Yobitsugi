@@ -19,6 +19,9 @@ MonoBehaviour:
     text: "\u5730\u4E0B\u9053\u306E\u86CD\u5149\u706F\u304C\u3001\u7B49\u9593\u9694\u306B\u5149\u3063\u3066\u3044\u305F\u3002\u540C\u3058\u8E0A\u308A\u5834\u304C\u3001\u4F55\u5EA6\u3082\u73FE\u308C\u308B\u3002"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: chapter
@@ -30,6 +33,9 @@ MonoBehaviour:
     text: "\u307E\u305F\u540C\u3058\u3068\u3053\u308D\u2026\u2026\u3002\u30C7\u30B8\u30E3\u30D6?"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 0
@@ -59,6 +65,9 @@ MonoBehaviour:
     text: "\u9055\u3046\u3088\u3002\u624B\u3059\u308A\u306E\u7D99\u304E\u76EE\u3001\u3055\u3063\u304D\u306F\u4E8C\u3064\u3002\u4ECA\u306F\u4E09\u3064"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -70,6 +79,9 @@ MonoBehaviour:
     text: "\u51EA\u306F\u58C1\u306E\u50B7\u3092\u6307\u3067\u306A\u305E\u308A\u306A\u304C\u3089\u6B69\u304F\u3002\u76EE\u5370\u306E\u8AAD\u307F\u65B9\u3092\u3001\u4E03\u5E74\u304B\u3051\u3066\u899A\u3048\u305F\u306E\u3060\u3002"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -81,6 +93,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u4FFA\u3001\u3044\u307E\u307E\u3067\u4F55\u3092\u898B\u3066\u6B69\u3044\u3066\u305F\u3093\u3060\u308D\u3046\u306A"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -92,6 +107,9 @@ MonoBehaviour:
     text: "\u52D8"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -103,6 +121,9 @@ MonoBehaviour:
     text: "\u5F53\u305F\u3063\u3066\u308B\u306E\u304C\u6094\u3057\u3044"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
       action: 2
@@ -120,6 +141,9 @@ MonoBehaviour:
     text: "\u505C\u96FB\u533A\u9593\u3002\u61D0\u4E2D\u96FB\u706F\u3092\u70B9\u3051\u308B\u3002\u5149\u306E\u8F2A\u306E\u4E2D\u3060\u3051\u304C\u3001\u4E16\u754C\u3060\u3063\u305F\u3002"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -131,6 +155,9 @@ MonoBehaviour:
     text: "\u6249\u304C\u5F15\u3063\u304B\u304B\u3063\u3066\u958B\u304B\u306A\u3044\u3002\u6714\u3055\u3093\u304C\u91D1\u5177\u306B\u624B\u3092\u5165\u308C\u3001\u51EA\u304C\u6B21\u306E\u7269\u9670\u3092\u6307\u3055\u3059\u3002\u308F\u305F\u3057\u304C\u624B\u5143\u3092\u7167\u3089\u3059\u3002"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -142,6 +169,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u4E09\u4EBA\u3060\u3068\u3001\u3053\u3093\u306A\u306B\u65E9\u3044\u3093\u3060"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -153,6 +183,9 @@ MonoBehaviour:
     text: "\u4E00\u4EBA\u3060\u3068\u3001\u3053\u306E\u6249\u306E\u524D\u3067\u4E09\u56DE\u3042\u304D\u3089\u3081\u305F"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -164,6 +197,9 @@ MonoBehaviour:
     text: "\u3058\u3083\u3042\u4ECA\u65E5\u306F\u3001\u56DB\u56DE\u76EE\u3060\u306A\u3002\u958B\u3044\u305F\u3076\u3093\u306E"
     background: {fileID: 21300000, guid: e82401ce89096184e9600a3a1441b12d, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: team_formed
@@ -175,6 +211,9 @@ MonoBehaviour:
     text: "\u968E\u6BB5\u3092\u4E0A\u304C\u308B\u3068\u3001\u6848\u5185\u677F\u304C\u3042\u3063\u305F\u3002\u300E\u753A\u5916\u65B9\u9762\u300F\u3002\u77E2\u5370\u306E\u5148\u306F\u660E\u308B\u3044\u3002"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -186,6 +225,9 @@ MonoBehaviour:
     text: "\u51FA\u53E3\u3060"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 2
@@ -208,6 +250,9 @@ MonoBehaviour:
     text: "\u308F\u305F\u3057\u306F\u8D70\u3063\u305F\u3002\u660E\u304B\u308A\u3078\u3002\u5916\u3078\u3002"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -219,6 +264,9 @@ MonoBehaviour:
     text: "\u629C\u3051\u305F\u5148\u306B\u3042\u3063\u305F\u306E\u306F\u3001\u898B\u899A\u3048\u306E\u3042\u308B\u81EA\u52D5\u8CA9\u58F2\u6A5F\u3060\u3063\u305F\u3002\u5546\u5E97\u8857\u3002\u6700\u521D\u306E\u5834\u6240\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -230,6 +278,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u3060\u304B\u3089\u3001\u770B\u677F\u306F\u5F53\u3066\u306B\u306A\u3089\u306A\u3044\u306E"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: 0c4cbfb79b061d745a41dd5923223866, type: 2}
       action: 2
@@ -247,6 +298,9 @@ MonoBehaviour:
     text: "\u3054\u3081\u3093"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 2
@@ -264,6 +318,9 @@ MonoBehaviour:
     text: "\u80CC\u5F8C\u3068\u3001\u6A2A\u9053\u3002\u4E8C\u65B9\u5411\u304B\u3089\u9774\u97F3\u304C\u53CD\u97FF\u3057\u305F\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 1
+    cameraPunch: 0.1
     portraits: []
     choices: []
     setFlag: 
@@ -275,6 +332,9 @@ MonoBehaviour:
     text: "\u3048"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 2
@@ -292,6 +352,9 @@ MonoBehaviour:
     text: "\u8DB3\u304C\u52D5\u304B\u306A\u3044\u3002\u660E\u304B\u308A\u3092\u6D88\u3055\u306A\u304D\u3083\u3001\u96A0\u308C\u306A\u304D\u3083\u3001\u3068\u982D\u3067\u306F\u5206\u304B\u3063\u3066\u3044\u308B\u306E\u306B\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -303,6 +366,9 @@ MonoBehaviour:
     text: "\u3053\u3063\u3061"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: 0c4cbfb79b061d745a41dd5923223866, type: 2}
       action: 2
@@ -320,6 +386,9 @@ MonoBehaviour:
     text: "\u8155\u3092\u5F15\u304B\u308C\u305F\u3002\u5F37\u3044\u529B\u3060\u3063\u305F\u3002\u7269\u7F6E\u306E\u6238\u304C\u9589\u307E\u308A\u3001\u51EA\u306E\u624B\u304C\u308F\u305F\u3057\u306E\u61D0\u4E2D\u96FB\u706F\u3092\u6D88\u3059\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: nagi_saved_mio
@@ -331,6 +400,9 @@ MonoBehaviour:
     text: "\u8DB3\u97F3\u304C\u3001\u6238\u306E\u524D\u3067\u6B62\u307E\u308B\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -342,6 +414,9 @@ MonoBehaviour:
     text: "\u4E00\u3002\u4E8C\u3002\u4E09\u3002\u56DB\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -353,6 +428,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u96E2\u308C\u3066\u3044\u304F\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -364,6 +442,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u3075\u3046"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: 0c4cbfb79b061d745a41dd5923223866, type: 2}
       action: 2
@@ -381,6 +462,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u52A9\u3051\u3089\u308C\u305F"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 2
@@ -398,6 +482,9 @@ MonoBehaviour:
     text: "\u3046\u3093"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -409,6 +496,9 @@ MonoBehaviour:
     text: "\u308F\u305F\u3057\u304C\u3001\u8FCE\u3048\u306B\u6765\u305F\u306E\u306B"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -420,6 +510,9 @@ MonoBehaviour:
     text: "\u6765\u3066\u304F\u308C\u305F\u3058\u3083\u3093"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: 0c4cbfb79b061d745a41dd5923223866, type: 2}
       action: 2
@@ -437,6 +530,9 @@ MonoBehaviour:
     text: "\u52A9\u3051\u3089\u308C\u3066\u3070\u3063\u304B\u308A"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -448,6 +544,9 @@ MonoBehaviour:
     text: "\u305D\u308C\u3001\u3060\u3081\u306A\u306E?"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: 0c4cbfb79b061d745a41dd5923223866, type: 2}
       action: 2
@@ -465,6 +564,9 @@ MonoBehaviour:
     text: "\u3059\u3050\u306B\u306F\u7B54\u3048\u3089\u308C\u306A\u304B\u3063\u305F\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -476,6 +578,9 @@ MonoBehaviour:
     text: "\u308F\u305F\u3057\u306E\u4E2D\u306E\u59B9\u306F\u3001\u307E\u3060\u5C0F\u3055\u306A\u624B\u3067\u670D\u306E\u88FE\u3092\u5F15\u3044\u3066\u3044\u308B\u3002\u76EE\u306E\u524D\u306E\u59B9\u306F\u3001\u305D\u306E\u624B\u3067\u308F\u305F\u3057\u3092\u3053\u3053\u307E\u3067\u5F15\u3063\u5F35\u3063\u3066\u304D\u305F\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -487,6 +592,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u5341\u4E8C\u6B73\u306E\u3042\u3093\u305F\u3092\u63A2\u3057\u306B\u6765\u305F\u307E\u307E\u3001\u3060\u3063\u305F\u307F\u305F\u3044"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 2
@@ -504,6 +612,9 @@ MonoBehaviour:
     text: "\u3046\u3093\u3002\u3061\u3087\u3063\u3068\u601D\u3063\u305F"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -515,6 +626,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u3042\u306E\u3055\u3002\u4E00\u4EBA\u3067\u306A\u3093\u3068\u304B\u3059\u308B\u306E\u3001\u3084\u3081\u3066\u3082\u3044\u3044?"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: 0c4cbfb79b061d745a41dd5923223866, type: 2}
       action: 2
@@ -532,6 +646,9 @@ MonoBehaviour:
     text: "\u4E03\u5E74\u3001\u8AB0\u306B\u3082\u8A00\u3048\u306A\u304B\u3063\u305F\u8A00\u8449\u3060\u3068\u601D\u3063\u305F\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices:
     - text: "\u3046\u3093\u3002\u3084\u3081\u3088\u3046"
@@ -548,6 +665,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u6B21\u306E\u89D2\u3001\u3069\u3063\u3061?"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -559,6 +679,9 @@ MonoBehaviour:
     text: "\u53F3\u3002\u5DE6\u306F\u623B\u3063\u3066\u304D\u3061\u3083\u3046"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -570,6 +693,9 @@ MonoBehaviour:
     text: "\u5206\u304B\u3063\u305F\u3002\u5148\u3001\u304A\u9858\u3044"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -581,6 +707,9 @@ MonoBehaviour:
     text: "\u3046\u3093"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -592,6 +721,9 @@ MonoBehaviour:
     text: "\u3058\u3083\u3042\u4FFA\u3001\u5F8C\u308D\u3092\u2015\u2015"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -603,6 +735,9 @@ MonoBehaviour:
     text: "\u9053\u306F\u9078\u3070\u306A\u3044\u3067"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -614,6 +749,9 @@ MonoBehaviour:
     text: "\u9053\u306F\u9078\u3070\u306A\u3044\u3067"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -625,6 +763,9 @@ MonoBehaviour:
     text: "\u305D\u3053\u307E\u3067\u4FE1\u7528\u306A\u3044? \u2026\u2026\u307E\u3042\u3001\u5B9F\u7E3E\u306F\u306A\u3044\u3051\u3069"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
       action: 2
@@ -642,6 +783,9 @@ MonoBehaviour:
     text: "\u4ECA\u5EA6\u306F\u3001\u4E09\u4EBA\u3068\u3082\u5C11\u3057\u3060\u3051\u7B11\u3048\u305F\u3002"
     background: {fileID: 21300000, guid: 32a0c07bc0e56ee46a69160562070855, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 2
@@ -671,6 +815,9 @@ MonoBehaviour:
     text: "\u624B\u5E33\u3092\u958B\u304F\u3002\u5199\u771F\u306E\u30BF\u30A4\u30EB\u3002\u6B20\u3051\u65B9\u3002\u89D2\u5EA6\u3002\u76EE\u306E\u524D\u306E\u99C5\u3068\u3001\u898B\u6BD4\u3079\u308B\u3002"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -682,6 +829,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u3053\u306E\u99C5\u3058\u3083\u306A\u3044\u3002\u30BF\u30A4\u30EB\u306E\u6B20\u3051\u304C\u9006"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -693,6 +843,9 @@ MonoBehaviour:
     text: "\u3058\u3083\u3042\u3001\u3042\u3063\u3061\u306E\u8FC2\u56DE\u8DEF\u3002\u9060\u56DE\u308A\u3060\u3051\u3069\u3001\u884C\u3051\u308B"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -704,6 +857,9 @@ MonoBehaviour:
     text: "\u6B69\u3044\u3066\u3001\u307E\u305F\u6B69\u3044\u3066\u3002\u4E09\u3064\u76EE\u306E\u99C5\u820E\u3067\u3001\u308F\u305F\u3057\u306F\u8DB3\u3092\u6B62\u3081\u305F\u3002"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -715,6 +871,9 @@ MonoBehaviour:
     text: "\u6B20\u3051\u305F\u9752\u3044\u30BF\u30A4\u30EB\u3002\u9306\u306E\u7B4B\u3002\u5199\u771F\u3068\u540C\u3058\u89D2\u5EA6\u3002"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: real_station_found
@@ -726,6 +885,9 @@ MonoBehaviour:
     text: "\u3053\u3053\u3060"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: beb5c9ded7badfe4fb6406f4adb60e1a, type: 2}
       action: 2
@@ -743,6 +905,9 @@ MonoBehaviour:
     text: "\u30DB\u30FC\u30E0\u306E\u5965\u3002\u9589\u3058\u305F\u9244\u306E\u6249\u306E\u9699\u9593\u304B\u3089\u3001\u98A8\u304C\u5439\u3044\u3066\u3044\u305F\u3002\u51B7\u305F\u304F\u3066\u3001\u5C11\u3057\u3060\u3051\u3001\u8349\u306E\u306B\u304A\u3044\u304C\u3057\u305F\u3002"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -754,6 +919,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u5916\u306E\u306B\u304A\u3044\u3063\u3066\u3001\u3053\u308C\u304B"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -765,6 +933,9 @@ MonoBehaviour:
     text: "\u2026\u2026\u3053\u3053\u3001\u4F55\u56DE\u3082\u6765\u305F"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: 0c4cbfb79b061d745a41dd5923223866, type: 2}
       action: 2
@@ -782,6 +953,9 @@ MonoBehaviour:
     text: "\u958B\u304B\u306A\u3044\u306E\u3002\u5185\u5074\u304B\u3089\u3082\u3001\u5916\u5074\u304B\u3089\u3082\u3002\u79C1\u4E00\u4EBA\u3058\u3083\u3001\u3069\u3046\u3057\u3066\u3082"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: hidden_route_revealed
@@ -793,6 +967,9 @@ MonoBehaviour:
     text: "\u5730\u56F3\u3067\u6307\u3092\u96A0\u3057\u305F\u5834\u6240\u3060\u3002\u8AE6\u3081\u304D\u308C\u305A\u306B\u3001\u8AE6\u3081\u308B\u3057\u304B\u306A\u304B\u3063\u305F\u5834\u6240\u3002"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -804,6 +981,9 @@ MonoBehaviour:
     text: "\u898B\u305B\u3066"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
       action: 2
@@ -821,6 +1001,9 @@ MonoBehaviour:
     text: "\u6714\u3055\u3093\u306F\u6249\u306E\u524D\u306B\u3057\u3083\u304C\u307F\u3001\u91D1\u5177\u3092\u4E09\u7B87\u6240\u3055\u308F\u3063\u3066\u3001\u5DE5\u5177\u888B\u3092\u4E0B\u308D\u3057\u305F\u3002"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits: []
     choices: []
     setFlag: 
@@ -832,6 +1015,9 @@ MonoBehaviour:
     text: "\u9053\u9806\u4EE5\u5916\u306F\u3001\u308F\u308A\u3068\u5F97\u610F\u306A\u3093\u3060"
     background: {fileID: 21300000, guid: 9c6ad92debc82994d8d61a34e77d50bf, type: 3}
     voice: {fileID: 0}
+    stinger: {fileID: 0}
+    screenFlash: 0
+    cameraPunch: 0
     portraits:
     - character: {fileID: 11400000, guid: f240df0d7b28cde458974d0e44e5ed8f, type: 2}
       action: 2
