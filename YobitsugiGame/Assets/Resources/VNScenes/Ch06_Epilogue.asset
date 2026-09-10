@@ -192,8 +192,13 @@ MonoBehaviour:
       nextLineIndex: 11
       setFlag: mio_changed
       setFlagValue: 1
-      requiredFlag: 
-    setFlag: 
+      requiredFlag:
+    - text: "\u81EA\u5206\u306E\u4E2D\u306B\u3057\u307E\u3063\u3066\u304A\u304F"
+      nextLineIndex: 15
+      setFlag:
+      setFlagValue: 1
+      requiredFlag:
+    setFlag:
     setFlagValue: 1
     requiredFlag: 
     forbiddenFlag: 
