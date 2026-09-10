@@ -104,6 +104,8 @@ namespace Yobitsugi.UI
             if (autoSlotButton != null)
                 autoSlotButton.onClick.AddListener(() => AutoSlotSelected?.Invoke());
 
+            this.WireButtonClickSounds();
+
             cancelAction = inputActions != null ? inputActions.FindActionMap("UI", false)?.FindAction("Cancel", false) : null;
 
             if (slotPanelTitle != null) slotPanelTitleDefaultColor = slotPanelTitle.color;

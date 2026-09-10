@@ -156,6 +156,8 @@ MonoBehaviour:
   expressionCrossfade: 0.15
   slideDistance: 160
   emoteStrength: 24
+  exitSettleDistance: 10
+  exitSettleDuration: 0.12
   speakingTint: {r: 1, g: 1, b: 1, a: 1}
   idleTint: {r: 0.5, g: 0.5, b: 0.58, a: 1}
   speakingScale: 1
@@ -364,6 +366,9 @@ MonoBehaviour:
   choiceFadeIn: 0.25
   choiceStagger: 0.07
   choiceEnterScale: 0.85
+  choiceSelectDuration: 0.15
+  backgroundZoom: 1.06
+  backgroundZoomDuration: 10
 --- !u!1 &4689846527379919147
 GameObject:
   m_ObjectHideFlags: 0
@@ -747,8 +752,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u9078\u629E\u80A2"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d7d3518e44f54d241ad4fd4fe2f78942, type: 2}
-  m_sharedMaterial: {fileID: 7375646631288467123, guid: d7d3518e44f54d241ad4fd4fe2f78942, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0da80999dcad2d34c929520494f8f4b5, type: 2}
+  m_sharedMaterial: {fileID: -8155054474888916130, guid: 0da80999dcad2d34c929520494f8f4b5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -959,8 +964,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d7d3518e44f54d241ad4fd4fe2f78942, type: 2}
-  m_sharedMaterial: {fileID: 7375646631288467123, guid: d7d3518e44f54d241ad4fd4fe2f78942, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0da80999dcad2d34c929520494f8f4b5, type: 2}
+  m_sharedMaterial: {fileID: -8155054474888916130, guid: 0da80999dcad2d34c929520494f8f4b5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1096,8 +1101,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d7d3518e44f54d241ad4fd4fe2f78942, type: 2}
-  m_sharedMaterial: {fileID: 7375646631288467123, guid: d7d3518e44f54d241ad4fd4fe2f78942, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0da80999dcad2d34c929520494f8f4b5, type: 2}
+  m_sharedMaterial: {fileID: -8155054474888916130, guid: 0da80999dcad2d34c929520494f8f4b5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1309,8 +1314,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u25BC"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d7d3518e44f54d241ad4fd4fe2f78942, type: 2}
-  m_sharedMaterial: {fileID: 7375646631288467123, guid: d7d3518e44f54d241ad4fd4fe2f78942, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0da80999dcad2d34c929520494f8f4b5, type: 2}
+  m_sharedMaterial: {fileID: -8155054474888916130, guid: 0da80999dcad2d34c929520494f8f4b5, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -32,6 +32,24 @@ namespace Yobitsugi.Core
         /// </summary>
         public static event Action<float, float> OnScreenShakeRequested;
 
+        /// <summary>A UI button was pressed (menus, title screen, dialogue choices).</summary>
+        public static event Action OnUIButtonClicked;
+
+        /// <summary>A door finished toggling: true if it is now open, false if now closed.</summary>
+        public static event Action<bool> OnDoorToggled;
+
+        /// <summary>A VN line wants its stinger SFX played the instant it appears (punchline/gasp sync).</summary>
+        public static event Action<AudioClip> OnLineStingerRequested;
+
+        /// <summary>A VN line wants a quick full-screen white flash (comedic or shock beat).</summary>
+        public static event Action OnScreenFlashRequested;
+
+        /// <summary>A VN line wants a quick camera punch-in, given as a zoom intensity (0-1 range, typically 0.05-0.2).</summary>
+        public static event Action<float> OnCameraPunchRequested;
+
+        /// <summary>The title screen is now showing (boot, or returning to it), so its own theme should play.</summary>
+        public static event Action OnTitleScreenShown;
+
         public static void RaiseVNSceneStarted(VNScene scene) => OnVNSceneStarted?.Invoke(scene);
         public static void RaiseVNSceneEnded(VNScene scene) => OnVNSceneEnded?.Invoke(scene);
         public static void RaiseVNLineShown(string speaker, string text, AudioClip voice) => OnVNLineShown?.Invoke(speaker, text, voice);
@@ -44,6 +62,12 @@ namespace Yobitsugi.Core
         public static void RaiseDialogueCharacterRevealed() => OnDialogueCharacterRevealed?.Invoke();
         public static void RaiseCharacterReaction(CharacterDefinition character, string expressionKey) => OnCharacterReaction?.Invoke(character, expressionKey);
         public static void RaiseScreenShakeRequested(float duration, float strength) => OnScreenShakeRequested?.Invoke(duration, strength);
+        public static void RaiseUIButtonClicked() => OnUIButtonClicked?.Invoke();
+        public static void RaiseDoorToggled(bool isOpen) => OnDoorToggled?.Invoke(isOpen);
+        public static void RaiseLineStingerRequested(AudioClip clip) => OnLineStingerRequested?.Invoke(clip);
+        public static void RaiseScreenFlashRequested() => OnScreenFlashRequested?.Invoke();
+        public static void RaiseCameraPunchRequested(float intensity) => OnCameraPunchRequested?.Invoke(intensity);
+        public static void RaiseTitleScreenShown() => OnTitleScreenShown?.Invoke();
 
         // Static events outlive play sessions when domain reload is disabled, so clear them on every play.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -61,6 +85,12 @@ namespace Yobitsugi.Core
             OnDialogueCharacterRevealed = null;
             OnCharacterReaction = null;
             OnScreenShakeRequested = null;
+            OnUIButtonClicked = null;
+            OnDoorToggled = null;
+            OnLineStingerRequested = null;
+            OnScreenFlashRequested = null;
+            OnCameraPunchRequested = null;
+            OnTitleScreenShown = null;
         }
     }
 }

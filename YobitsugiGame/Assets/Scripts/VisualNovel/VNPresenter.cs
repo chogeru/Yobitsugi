@@ -259,6 +259,13 @@ namespace Yobitsugi.VisualNovel
             // Skip mode races past lines, so voice would only ever be cut off mid-word.
             GameEvents.RaiseVoiceRequested(SkipMode ? null : line.voice);
 
+            if (!SkipMode)
+            {
+                if (line.stinger != null) GameEvents.RaiseLineStingerRequested(line.stinger);
+                if (line.screenFlash) GameEvents.RaiseScreenFlashRequested();
+                if (line.cameraPunch > 0f) GameEvents.RaiseCameraPunchRequested(line.cameraPunch);
+            }
+
             KillTweens();
 
             string text = line.text ?? string.Empty;

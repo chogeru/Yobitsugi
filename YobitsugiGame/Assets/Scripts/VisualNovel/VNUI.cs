@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using Yobitsugi.Core;
+using Yobitsugi.UI;
 
 namespace Yobitsugi.VisualNovel
 {
@@ -18,11 +19,17 @@ namespace Yobitsugi.VisualNovel
         [SerializeField] private Image backgroundFadeImage;
         [SerializeField] private CanvasGroup textPanelGroup;
         [SerializeField] private TMP_Text speakerText;
+        [Tooltip("Nameplate background chip, hidden entirely for narration lines with no speaker.")]
+        [SerializeField] private GameObject speakerNameplate;
+        [Tooltip("Optional colour accent on the nameplate that matches the speaking character.")]
+        [SerializeField] private Image speakerAccent;
         [SerializeField] private TMP_Text dialogueText;
         [SerializeField] private Button advanceButton;
         [SerializeField] private GameObject nextIndicator;
         [SerializeField] private Transform choicesContainer;
         [SerializeField] private Button choiceButtonTemplate;
+        [Tooltip("Full-screen white image used for the screen-flash effect. Alpha should start at 0.")]
+        [SerializeField] private Image flashOverlay;
 
         [Header("Input")]
         [Tooltip("Project input actions; the UI/Submit action advances dialogue from keyboard and gamepad.")]
@@ -40,6 +47,8 @@ namespace Yobitsugi.VisualNovel
         [Tooltip("Slow zoom applied to the background for as long as it's on screen, so scenes never look static.")]
         [SerializeField] private float backgroundZoom = 1.06f;
         [SerializeField] private float backgroundZoomDuration = 10f;
+        [SerializeField] private float flashDuration = 0.25f;
+        [SerializeField] private float cameraPunchDuration = 0.3f;
 
         private readonly List<Button> spawnedChoices = new List<Button>();
         private InputAction submitAction;
@@ -56,6 +65,8 @@ namespace Yobitsugi.VisualNovel
         private void OnEnable()
         {
             GameEvents.OnScreenShakeRequested += HandleShakeRequested;
+            GameEvents.OnScreenFlashRequested += HandleScreenFlashRequested;
+            GameEvents.OnCameraPunchRequested += HandleCameraPunchRequested;
 
             if (submitAction == null) return;
 
@@ -66,10 +77,32 @@ namespace Yobitsugi.VisualNovel
         private void OnDisable()
         {
             GameEvents.OnScreenShakeRequested -= HandleShakeRequested;
+            GameEvents.OnScreenFlashRequested -= HandleScreenFlashRequested;
+            GameEvents.OnCameraPunchRequested -= HandleCameraPunchRequested;
 
             if (submitAction == null) return;
             submitAction.performed -= OnSubmit;
             submitAction.Disable();
+        }
+
+        /// <summary>Comedic/shock beat: a quick white flash that dissolves away.</summary>
+        private void HandleScreenFlashRequested()
+        {
+            if (flashOverlay == null) return;
+
+            flashOverlay.DOKill();
+            flashOverlay.color = new Color(1f, 1f, 1f, 1f);
+            flashOverlay.DOFade(0f, flashDuration).SetEase(Ease.OutQuad).SetLink(gameObject);
+        }
+
+        /// <summary>Quick punch-in on the background to emphasise a dramatic line.</summary>
+        private void HandleCameraPunchRequested(float intensity)
+        {
+            if (backgroundImage == null) return;
+
+            // Additive punch on top of the background's own continuous Ken Burns zoom tween — must not
+            // DOKill() the rect here, that would also stop the unrelated slow zoom permanently.
+            backgroundImage.rectTransform.DOPunchScale(Vector3.one * intensity, cameraPunchDuration, 1, 0.5f).SetLink(gameObject);
         }
 
         /// <summary>Dramatic beats shake the whole dialogue canvas, since VN runs on a screen-space overlay the 3D camera shake never reaches.</summary>
@@ -122,8 +155,12 @@ namespace Yobitsugi.VisualNovel
 
         public void SetSpeaker(string speaker, Color color)
         {
+            bool hasSpeaker = !string.IsNullOrEmpty(speaker);
+
             speakerText.text = speaker;
             speakerText.color = color;
+            if (speakerAccent != null) speakerAccent.color = color;
+            if (speakerNameplate != null) speakerNameplate.SetActive(hasSpeaker);
         }
 
         public void SetBackground(Sprite sprite)
@@ -221,6 +258,7 @@ namespace Yobitsugi.VisualNovel
                 if (label != null) label.text = choices[i].text;
 
                 button.onClick.AddListener(() => AnimateChoiceSelection(choiceIndex));
+                button.WireButtonClickSound();
                 spawnedChoices.Add(button);
 
                 PlayChoiceEntrance(button, choiceIndex * choiceStagger);

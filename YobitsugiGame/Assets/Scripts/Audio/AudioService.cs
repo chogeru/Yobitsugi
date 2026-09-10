@@ -34,6 +34,7 @@ namespace Yobitsugi.Audio
         [SerializeField] private AudioSource voiceSource;
 
         [Header("Music")]
+        [SerializeField] private AudioClip titleMusic;
         [SerializeField] private AudioClip vnMusic;
         [SerializeField] private AudioClip explorationAmbience;
         [SerializeField] private float musicFade = 1.2f;
@@ -47,6 +48,11 @@ namespace Yobitsugi.Audio
         [SerializeField] private AudioClip saveClip;
         [Tooltip("Played once when GameManager.ClearGame fires; the BGM fades out to let it land.")]
         [SerializeField] private AudioClip clearFanfareClip;
+        [SerializeField] private AudioClip uiClickClip;
+        [SerializeField] private AudioClip doorOpenClip;
+        [SerializeField] private AudioClip doorCloseClip;
+        [Tooltip("Played on every VN <-> exploration mode switch, layered under the music/ambience crossfade.")]
+        [SerializeField] private AudioClip modeTransitionWhoosh;
         [SerializeField, Range(0f, 1f)] private float sfxVolume = 0.7f;
 
         [Header("Typing SFX")]
@@ -107,6 +113,10 @@ namespace Yobitsugi.Audio
             GameEvents.OnDialogueCharacterRevealed += HandleDialogueCharacterRevealed;
             GameEvents.OnCharacterReaction += HandleCharacterReaction;
             GameEvents.OnGameCleared += HandleGameCleared;
+            GameEvents.OnUIButtonClicked += HandleUIButtonClicked;
+            GameEvents.OnDoorToggled += HandleDoorToggled;
+            GameEvents.OnLineStingerRequested += PlaySfx;
+            GameEvents.OnTitleScreenShown += HandleTitleScreenShown;
         }
 
         private void OnDisable()
@@ -120,6 +130,10 @@ namespace Yobitsugi.Audio
             GameEvents.OnDialogueCharacterRevealed -= HandleDialogueCharacterRevealed;
             GameEvents.OnCharacterReaction -= HandleCharacterReaction;
             GameEvents.OnGameCleared -= HandleGameCleared;
+            GameEvents.OnUIButtonClicked -= HandleUIButtonClicked;
+            GameEvents.OnDoorToggled -= HandleDoorToggled;
+            GameEvents.OnLineStingerRequested -= PlaySfx;
+            GameEvents.OnTitleScreenShown -= HandleTitleScreenShown;
         }
 
         // --- User volume (system menu sliders) ---
@@ -185,7 +199,12 @@ namespace Yobitsugi.Audio
             // Entering VN: HandleSceneStarted picks the track (per-scene override or the vnMusic default).
             if (!isInVN) CrossfadeTo(musicSource, null, EffectiveMusicVolume);
             CrossfadeTo(ambienceSource, isInVN ? null : explorationAmbience, EffectiveAmbienceVolume);
+            PlaySfx(modeTransitionWhoosh);
         }
+
+        private void HandleTitleScreenShown() => CrossfadeTo(musicSource, titleMusic, EffectiveMusicVolume);
+        private void HandleUIButtonClicked() => PlaySfx(uiClickClip);
+        private void HandleDoorToggled(bool isOpen) => PlaySfx(isOpen ? doorOpenClip : doorCloseClip);
 
         /// <summary>Each VN scene may override the default track, so chapters can carry their own BGM.</summary>
         private void HandleSceneStarted(VNScene scene)

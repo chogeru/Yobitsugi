@@ -67,6 +67,24 @@ namespace Yobitsugi.VisualNovel
 #endif
         public AudioClip voice;
 
+        [Tooltip("One-shot SFX played the instant this line appears — a punchline stinger, sync'd to a gag or a gasp.")]
+#if ODIN_INSPECTOR
+        [BoxGroup("演出"), LabelText("効果音")]
+#endif
+        public AudioClip stinger;
+
+        [Tooltip("Flash the screen white for an instant when this line appears (comedic beat / shock beat).")]
+#if ODIN_INSPECTOR
+        [BoxGroup("演出"), LabelText("画面フラッシュ")]
+#endif
+        public bool screenFlash;
+
+        [Tooltip("Quick camera punch-in on the background, 0 = none. Typical range 0.05-0.2.")]
+#if ODIN_INSPECTOR
+        [BoxGroup("演出"), LabelText("カメラパンチイン")]
+#endif
+        public float cameraPunch;
+
         [Tooltip("Stage directions applied before this line is shown.")]
 #if ODIN_INSPECTOR
         [ListDrawerSettings(DefaultExpandedState = true), LabelText("立ち絵")]

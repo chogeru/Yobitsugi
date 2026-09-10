@@ -23,6 +23,8 @@ namespace Yobitsugi.UI
             if (startButton != null) startButton.onClick.AddListener(HandleStart);
             if (continueButton != null) continueButton.onClick.AddListener(HandleContinue);
             if (quitButton != null) quitButton.onClick.AddListener(HandleQuit);
+
+            this.WireButtonClickSounds();
         }
 
         private void Start()
@@ -40,6 +42,8 @@ namespace Yobitsugi.UI
             // Start/Continue is pressed, so without this the title's buttons are literally unreachable.
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+
+            GameEvents.RaiseTitleScreenShown();
         }
 
         private void HandleStart() => DismissAsync(() => gameModeManager.BeginGame()).Forget();

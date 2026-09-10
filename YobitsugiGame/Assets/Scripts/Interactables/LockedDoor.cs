@@ -56,6 +56,8 @@ namespace Yobitsugi.Interactables
             moveCts?.Cancel();
             moveCts = new CancellationTokenSource();
             RotateToAsync(isOpen ? openRotation : closedRotation, moveCts.Token).Forget();
+
+            GameEvents.RaiseDoorToggled(isOpen);
         }
 
         private async UniTaskVoid RotateToAsync(Quaternion target, CancellationToken token)
