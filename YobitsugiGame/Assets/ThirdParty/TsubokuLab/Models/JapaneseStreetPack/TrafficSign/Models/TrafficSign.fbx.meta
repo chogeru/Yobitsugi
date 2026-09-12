@@ -1,0 +1,239 @@
+fileFormatVersion: 2
+guid: f35bed39cf2d4ea46a87aca1df3c5033
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: TrafficSign_CautionTriangle
+    100004: TrafficSign_Circle
+    100006: TrafficSign_DetailLarge
+    100008: TrafficSign_DetailSmall
+    100010: TrafficSign_Diamond
+    100012: TrafficSign_OneWayRectangle
+    100014: TrafficSign_Square
+    100016: TrafficSign_Triangle
+    100018: TrafficSignPole_2.5m
+    100020: TrafficSignPole_3.5m
+    100022: TrafficSignPole_3m
+    100024: TrafficSignPole_3.0m
+    100026: TrafficSign_Arm
+    100028: TrafficSign_Mirror
+    100030: TrafficSign_Mirror_Attention
+    100032: TrafficSignPole_3.0m_type2
+    400000: //RootNode
+    400002: TrafficSign_CautionTriangle
+    400004: TrafficSign_Circle
+    400006: TrafficSign_DetailLarge
+    400008: TrafficSign_DetailSmall
+    400010: TrafficSign_Diamond
+    400012: TrafficSign_OneWayRectangle
+    400014: TrafficSign_Square
+    400016: TrafficSign_Triangle
+    400018: TrafficSignPole_2.5m
+    400020: TrafficSignPole_3.5m
+    400022: TrafficSignPole_3m
+    400024: TrafficSignPole_3.0m
+    400026: TrafficSign_Arm
+    400028: TrafficSign_Mirror
+    400030: TrafficSign_Mirror_Attention
+    400032: TrafficSignPole_3.0m_type2
+    2100000: TrafficSignPoleMat
+    2100002: TrafficSignMat
+    2100004: TrafficSign_DetailLargeMat
+    2100006: TrafficSign_DetailSmallMat
+    2100008: TrafficSign_TriangleMat
+    2100010: TrafficSign_CautionTriangleMat
+    2100012: TrafficSign_SquareMat
+    2100014: TrafficSign_CircleMat
+    2100016: TrafficSign_OneWayRectangleMat
+    2100018: TrafficSign_DiamondMat
+    2100020: TrafficSign_MirrorMat
+    2300000: TrafficSign_CautionTriangle
+    2300002: TrafficSign_Circle
+    2300004: TrafficSign_DetailLarge
+    2300006: TrafficSign_DetailSmall
+    2300008: TrafficSign_Diamond
+    2300010: TrafficSign_OneWayRectangle
+    2300012: TrafficSign_Square
+    2300014: TrafficSign_Triangle
+    2300016: TrafficSignPole_2.5m
+    2300018: TrafficSignPole_3.5m
+    2300020: TrafficSignPole_3m
+    2300022: TrafficSignPole_3.0m
+    2300024: TrafficSign_Arm
+    2300026: TrafficSign_Mirror
+    2300028: TrafficSign_Mirror_Attention
+    2300030: TrafficSignPole_3.0m_type2
+    3300000: TrafficSign_CautionTriangle
+    3300002: TrafficSign_Circle
+    3300004: TrafficSign_DetailLarge
+    3300006: TrafficSign_DetailSmall
+    3300008: TrafficSign_Diamond
+    3300010: TrafficSign_OneWayRectangle
+    3300012: TrafficSign_Square
+    3300014: TrafficSign_Triangle
+    3300016: TrafficSignPole_2.5m
+    3300018: TrafficSignPole_3.5m
+    3300020: TrafficSignPole_3m
+    3300022: TrafficSignPole_3.0m
+    3300024: TrafficSign_Arm
+    3300026: TrafficSign_Mirror
+    3300028: TrafficSign_Mirror_Attention
+    3300030: TrafficSignPole_3.0m_type2
+    4300000: TrafficSignPole_3.5m
+    4300002: TrafficSign_DetailLarge
+    4300004: TrafficSignPole_3m
+    4300006: TrafficSignPole_2.5m
+    4300008: TrafficSign_DetailSmall
+    4300010: TrafficSign_Triangle
+    4300012: TrafficSign_CautionTriangle
+    4300014: TrafficSign_Square
+    4300016: TrafficSign_Circle
+    4300018: TrafficSign_OneWayRectangle
+    4300020: TrafficSign_Diamond
+    4300022: TrafficSignPole_3.0m
+    4300024: TrafficSign_Mirror
+    4300026: TrafficSign_Mirror_Attention
+    4300028: TrafficSignPole_3.0m_type2
+    4300030: TrafficSign_Arm
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSignMat
+    second: {fileID: 2100000, guid: e4a25ac13fdbcab4fad8ce4064a601d8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSignPoleMat
+    second: {fileID: 2100000, guid: 56dd7fc59d42ac84f882defc0cb0906d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_CautionTriangleMat
+    second: {fileID: 2100000, guid: a438e660d40c4dd4fbe51ff77af6f535, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_CircleMat
+    second: {fileID: 2100000, guid: 380ed86a6a7e5104e8b345a7486df4b7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_DetailLargeMat
+    second: {fileID: 2100000, guid: 5fad23b6c8089934c9c5a64a80115d68, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_DetailSmallMat
+    second: {fileID: 2100000, guid: 8406af6b6a28d95408fbfb6b6e9f6374, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_DiamondMat
+    second: {fileID: 2100000, guid: b973908383b9f3f49b18a73aee5c94db, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_MirrorMat
+    second: {fileID: 2100000, guid: b9643234abbf9db4580fda7d4b683adc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_OneWayRectangleMat
+    second: {fileID: 2100000, guid: 4aaeaaf012410e941a40f28a4cdcb3c7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_SquareMat
+    second: {fileID: 2100000, guid: a050dd164eb071b45a477b45f119f5c0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TrafficSign_TriangleMat
+    second: {fileID: 2100000, guid: 9c0f89e400a288b46897effdb4f50743, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

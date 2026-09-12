@@ -1,0 +1,153 @@
+fileFormatVersion: 2
+guid: 6ff19edce858eff43a5232488f45bbe9
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: bottles
+    100002: //RootNode
+    100004: VendingMachineGlass
+    100006: VendingMachine
+    100008: VendingMachine_LOD1
+    100010: VendingMachine_LOD0
+    100012: VendingMachineAdPanel
+    400000: bottles
+    400002: //RootNode
+    400004: VendingMachineGlass
+    400006: VendingMachine
+    400008: VendingMachine_LOD1
+    400010: VendingMachine_LOD0
+    400012: VendingMachineAdPanel
+    2100000: VendingMachineMat
+    2100002: VendingMachineGlassMat
+    2100004: VendingMachineBottlesMat
+    2100006: VendingMachineAdPanelMat
+    2300000: bottles
+    2300002: //RootNode
+    2300004: VendingMachineGlass
+    2300006: VendingMachine
+    2300008: VendingMachine_LOD1
+    2300010: VendingMachine_LOD0
+    2300012: VendingMachineAdPanel
+    3300000: bottles
+    3300002: //RootNode
+    3300004: VendingMachineGlass
+    3300006: VendingMachine
+    3300008: VendingMachine_LOD1
+    3300010: VendingMachine_LOD0
+    3300012: VendingMachineAdPanel
+    4300000: VendingMachine
+    4300002: bottles
+    4300004: VendingMachineGlass
+    4300006: VendingMachine_LOD1
+    4300008: VendingMachine_LOD0
+    4300010: VendingMachineAdPanel
+    20500000: //RootNode
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: VendingMachineAdPanelMat
+    second: {fileID: 2100000, guid: 0f65bf960c9951f458860725eb89f146, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: VendingMachineBottlesMat
+    second: {fileID: 2100000, guid: 6bc2c1d34f1f72e48af1c8577c4a855b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: VendingMachineGlassMat
+    second: {fileID: 2100000, guid: 402983fdaa57f6146bb86fa423f414a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: VendingMachineMat
+    second: {fileID: 2100000, guid: a2ad778cd9535bb4f97e57b1dedb039a, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages:
+    - 0.25
+    - 0.01
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

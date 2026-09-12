@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b97e06cfae5c7c64cb9ffe9434a34549
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 243562
+  packageName: UPixelator - Pixelize 3d Scenes
+  packageVersion: 3.1.0
+  assetPath: Assets/Abiogenesis3d/UPixelator/Example/Materials/UPixelator_URP.unitypackage
+  uploadId: 648967

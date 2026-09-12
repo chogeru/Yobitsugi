@@ -1,0 +1,23 @@
+当モデルの利用規約
+
+
+商用利用可です。
+ゲームMODや静画・動画作成に使えます。
+改造OKです。
+著作権は放棄してません。商用利用の際にはクレジットにBTA(Kelorin Jo)か、購入した商品のアドレスの表記をお願いします。
+二次配布は禁止します。
+ゲームMODなどの変換したデータの配布は、非劣化でテクスチャとメッシュデータが取り出せない形式なら配布を許可します。
+
+当モデルの利用に関して発生したトラブルは責任を負いかねます。ユーザーの自己責任で対処してください。
+
+
+License:
+
+It is available for commercial use.
+It can be used for game mods and still images / video creators.
+Remodeling is OK.
+Copyright is not abandoned. For commercial use, please write BTA (Kelorin Jo) or the address of the purchased product in the credit.
+Secondary distribution is prohibited.
+Distribution of converted data such as game mods is allowed if it is in a non-deteriorating format where texture and mesh data cannot be extracted.
+
+We are not responsible for any troubles caused by using this model. Please handle it at your own risk.

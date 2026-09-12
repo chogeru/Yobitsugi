@@ -24,6 +24,7 @@ public static class YobitsugiSceneBuilder
     private const string VNScenesFolder = "Assets/_Project/Resources/VNScenes";
     private const string VolumeProfilePath = "Assets/_Project/Settings/YobitsugiVolumeProfile.asset";
     private const string PrefabFolder = "Assets/_Project/Prefabs";
+    private const string UPixelatorPrefabPath = "Assets/ThirdParty/Abiogenesis3d/UPixelator/Prefabs/UPixelator.prefab";
     private const int RequiredClueCount = 3;
 
     private static Transform systemsRoot;
@@ -60,6 +61,7 @@ public static class YobitsugiSceneBuilder
         BuildEnvironment();
         var player = GetOrCreatePrefabInstance("Player", actorsRoot, BuildPlayer);
         player.transform.position = new Vector3(0f, 0.1f, -3f);
+        BuildPixelation();
         BuildClues();
         var hudCanvas = BuildGameManagerAndUI(player);
         BuildVisualNovel(player, hudCanvas);
@@ -74,6 +76,24 @@ public static class YobitsugiSceneBuilder
     }
 
     private static Transform CreateGroup(string name) => new GameObject(name).transform;
+
+    /// <summary>
+    /// Gives the 3D exploration scene a retro dot-art look by mirroring Camera.main through UPixelator,
+    /// which renders at a lower resolution and upscales with point filtering. No manual camera wiring
+    /// needed: UPixelator falls back to Camera.main when its mirroredCamera field is left unset.
+    /// </summary>
+    private static void BuildPixelation()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(UPixelatorPrefabPath);
+        if (prefab == null)
+        {
+            Debug.LogWarning($"UPixelator prefab not found at {UPixelatorPrefabPath}. Skipping pixelation setup.");
+            return;
+        }
+
+        var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, systemsRoot);
+        instance.name = "UPixelator";
+    }
 
     /// <summary>
     /// Returns a scene instance of <paramref name="name"/>: from the prefab when one exists (so hand-tuning it

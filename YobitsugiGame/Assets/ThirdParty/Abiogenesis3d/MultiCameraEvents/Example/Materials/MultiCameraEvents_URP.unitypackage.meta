@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fd825103a7f859841978b15e2d9ca89c
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 243562
+  packageName: UPixelator - Pixelize 3d Scenes
+  packageVersion: 3.1.0
+  assetPath: Assets/Abiogenesis3d/MultiCameraEvents/Example/Materials/MultiCameraEvents_URP.unitypackage
+  uploadId: 648967

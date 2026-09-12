@@ -1,0 +1,30 @@
+{
+    "name": "MultiCameraEvents",
+    "rootNamespace": "Abiogenesis3d",
+    "references": [
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Abiogenesis3d.Shared",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "",
+            "define": "UNITY_PIPELINE_URP"
+        },
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "",
+            "define": "ABIOGENESIS3D_INPUT_SYSTEM"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -1,0 +1,209 @@
+fileFormatVersion: 2
+guid: e1204b9984dba424f9c7606745678f93
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Sidewalk_BusStop
+    100004: Sidewalk_default_10m
+    100006: Sidewalk_default_20m
+    100008: Sidewalk_entrance_10m
+    100010: Sidewalk_entrance_20m
+    100012: Sidewalk_Ground
+    100014: Road_TwoLane_10m
+    100016: Road_TwoLane_20m
+    100018: RoadUnit_Corner
+    100020: RoadUnit_Crossroad
+    100022: RoadUnit_T-Junction
+    100024: Sidewalk_Default_10m
+    100026: Sidewalk_Default_20m
+    100028: Sidewalk_Entrance_10m
+    100030: Sidewalk_Entrance_20m
+    100032: Sidewalk_Ground_10m
+    100034: Sidewalk_Ground_20m
+    100036: Sidewalk_Ground_40m
+    100038: Sidewalk_Half_End
+    400000: //RootNode
+    400002: Sidewalk_BusStop
+    400004: Sidewalk_default_10m
+    400006: Sidewalk_default_20m
+    400008: Sidewalk_entrance_10m
+    400010: Sidewalk_entrance_20m
+    400012: Sidewalk_Ground
+    400014: Road_TwoLane_10m
+    400016: Road_TwoLane_20m
+    400018: RoadUnit_Corner
+    400020: RoadUnit_Crossroad
+    400022: RoadUnit_T-Junction
+    400024: Sidewalk_Default_10m
+    400026: Sidewalk_Default_20m
+    400028: Sidewalk_Entrance_10m
+    400030: Sidewalk_Entrance_20m
+    400032: Sidewalk_Ground_10m
+    400034: Sidewalk_Ground_20m
+    400036: Sidewalk_Ground_40m
+    400038: Sidewalk_Half_End
+    2100000: SidestoneMat
+    2100002: SidewalkMat
+    2100004: Asphalt18
+    2100006: RoadLabelMat
+    2100008: BrailleBlock_Dots_Mat
+    2300000: Sidewalk_BusStop
+    2300002: Sidewalk_default_10m
+    2300004: Sidewalk_default_20m
+    2300006: Sidewalk_entrance_10m
+    2300008: Sidewalk_entrance_20m
+    2300010: Sidewalk_Ground
+    2300012: Road_TwoLane_10m
+    2300014: Road_TwoLane_20m
+    2300016: RoadUnit_Corner
+    2300018: RoadUnit_Crossroad
+    2300020: RoadUnit_T-Junction
+    2300022: Sidewalk_Default_10m
+    2300024: Sidewalk_Default_20m
+    2300026: Sidewalk_Entrance_10m
+    2300028: Sidewalk_Entrance_20m
+    2300030: Sidewalk_Ground_10m
+    2300032: Sidewalk_Ground_20m
+    2300034: Sidewalk_Ground_40m
+    2300036: Sidewalk_Half_End
+    3300000: Sidewalk_BusStop
+    3300002: Sidewalk_default_10m
+    3300004: Sidewalk_default_20m
+    3300006: Sidewalk_entrance_10m
+    3300008: Sidewalk_entrance_20m
+    3300010: Sidewalk_Ground
+    3300012: Road_TwoLane_10m
+    3300014: Road_TwoLane_20m
+    3300016: RoadUnit_Corner
+    3300018: RoadUnit_Crossroad
+    3300020: RoadUnit_T-Junction
+    3300022: Sidewalk_Default_10m
+    3300024: Sidewalk_Default_20m
+    3300026: Sidewalk_Entrance_10m
+    3300028: Sidewalk_Entrance_20m
+    3300030: Sidewalk_Ground_10m
+    3300032: Sidewalk_Ground_20m
+    3300034: Sidewalk_Ground_40m
+    3300036: Sidewalk_Half_End
+    4300000: Sidewalk_default_10m
+    4300002: Sidewalk_default_20m
+    4300004: Sidewalk_entrance_20m
+    4300006: Sidewalk_entrance_10m
+    4300008: Sidewalk_Ground
+    4300010: Sidewalk_BusStop
+    4300012: Road_TwoLane_20m
+    4300014: Road_TwoLane_10m
+    4300016: RoadUnit_Corner
+    4300018: RoadUnit_Crossroad
+    4300020: RoadUnit_T-Junction
+    4300022: Sidewalk_Default_10m
+    4300024: Sidewalk_Default_20m
+    4300026: Sidewalk_Entrance_20m
+    4300028: Sidewalk_Entrance_10m
+    4300030: Sidewalk_Ground_10m
+    4300032: Sidewalk_Ground_20m
+    4300034: Sidewalk_Ground_40m
+    4300036: Sidewalk_Half_End
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Asphalt18
+    second: {fileID: 2100000, guid: 51b6379cf34d1a346b1e04b4baf66bdd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SidestoneMat
+    second: {fileID: 2100000, guid: b3f4e04f2e831004cb73710e493b46c8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SidewalkMat
+    second: {fileID: 2100000, guid: 9d65fd52cd8275f4a88d53e8f289814e, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties:
+    - '#BAKERY{"meshName":["Sidewalk_BusStop","Sidewalk_Default_10m","Sidewalk_Default_20m","Sidewalk_Entrance_10m","Sidewalk_Ground_10m","Sidewalk_Entrance_20m"],"padding":[25,36,25,36,28,25],"unwrapper":[1,1,1,1,1,1]}'
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
