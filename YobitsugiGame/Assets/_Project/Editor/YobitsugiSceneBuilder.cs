@@ -475,9 +475,11 @@ public static class YobitsugiSceneBuilder
         promptPanel.SetActive(false);
 
         var clearPanel = CreateFullScreenPanel("ClearPanel", canvasGO.transform, new Color(0f, 0f, 0f, 0.85f));
-        CreateText("ClearText", clearPanel.transform, "町から抜け出した",
+        var clearText = CreateText("ClearText", clearPanel.transform, "町から抜け出した",
             new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(600f, 80f),
-            36, TextAnchor.MiddleCenter);
+            40, TextAnchor.MiddleCenter);
+        clearText.fontStyle = TMPro.FontStyles.Bold;
+        clearText.color = new Color(0.91f, 0.76f, 0.44f, 1f);
         clearPanel.SetActive(false);
 
         var counterUI = canvasGO.AddComponent<ClueCounterUI>();
