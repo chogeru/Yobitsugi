@@ -786,7 +786,8 @@ public static class YobitsugiSceneBuilder
     private static Button CreateTitleButton(string name, Transform parent, string label, Sprite sprite)
     {
         var go = CreateUIObject(name, parent);
-        AddRect(go, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 68f));
+        // ui_button's 36px border on each side needs at least ~72px of height to slice cleanly.
+        AddRect(go, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 80f));
         var img = go.AddComponent<Image>();
         img.sprite = sprite;
         img.type = Image.Type.Sliced;
@@ -840,8 +841,10 @@ public static class YobitsugiSceneBuilder
         AddRect(nameplateChip, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -8f), new Vector2(180f, 48f));
         var nameplateImage = nameplateChip.AddComponent<Image>();
         nameplateImage.sprite = FindAsset<Sprite>("ui_panel");
-        nameplateImage.type = Image.Type.Sliced;
-        nameplateImage.color = new Color(1f, 1f, 1f, 0.9f);
+        // Simple, not Sliced: ui_panel's 40px border on each side is taller than this 48px-tall chip,
+        // which made the 9-slice degenerate to fully transparent instead of just looking squished.
+        nameplateImage.type = Image.Type.Simple;
+        nameplateImage.color = new Color(1f, 1f, 1f, 1f);
 
         var speakerText = CreateText("SpeakerText", textPanel.transform, "",
             new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(40f, -18f), new Vector2(-80f, 44f),
