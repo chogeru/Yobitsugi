@@ -601,10 +601,19 @@ public static class YobitsugiSceneBuilder
     private static Button CreateButton(string name, Transform parent, string label, Vector2 anchoredPos)
     {
         var go = CreateUIObject(name, parent);
-        AddRect(go, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), anchoredPos, new Vector2(280f, 64f));
+        // Height 76, not the visually-equivalent 64: ui_button's 36px border needs >=72px to slice cleanly
+        // (see the NameplateChip/title-button fix for what happens when a sliced sprite is too short).
+        AddRect(go, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), anchoredPos, new Vector2(300f, 76f));
         var img = go.AddComponent<Image>();
-        img.color = new Color(1f, 1f, 1f, 0.15f);
+        img.sprite = FindAsset<Sprite>("ui_button");
+        img.type = Image.Type.Sliced;
+        img.color = new Color(1f, 1f, 1f, 0.92f);
         var btn = go.AddComponent<Button>();
+        var colors = btn.colors;
+        colors.highlightedColor = new Color(1f, 0.94f, 0.8f, 1f);
+        colors.pressedColor = new Color(0.85f, 0.72f, 0.42f, 1f);
+        colors.selectedColor = colors.normalColor;
+        btn.colors = colors;
         CreateText(name + "Label", go.transform, label, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
             28, TextAnchor.MiddleCenter);
         return btn;
@@ -1082,9 +1091,14 @@ public static class YobitsugiSceneBuilder
         var menuButton = CreateButton("MenuButton", canvasGO.transform, "≡", Vector2.zero);
         AddRect(menuButton.gameObject, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
             new Vector2(-16f, -16f), new Vector2(56f, 56f));
+        // Small square icon button: too small to slice ui_button cleanly, so fall back to a flat tint.
+        var menuButtonImage = menuButton.GetComponent<Image>();
+        menuButtonImage.sprite = null;
+        menuButtonImage.type = Image.Type.Simple;
+        menuButtonImage.color = new Color(1f, 1f, 1f, 0.15f);
 
         var menuPanel = CreateFullScreenPanel("MenuPanel", canvasGO.transform, new Color(0f, 0f, 0f, 0.75f));
-        var menuButtons = CreateVerticalList("Buttons", menuPanel.transform, new Vector2(360f, 460f));
+        var menuButtons = CreateVerticalList("Buttons", menuPanel.transform, new Vector2(360f, 620f));
         menuButtons.GetComponent<RectTransform>().anchoredPosition = new Vector2(-200f, 0f);
         var autoButton = CreateButton("AutoButton", menuButtons.transform, "オート: OFF", Vector2.zero);
         var skipButton = CreateButton("SkipButton", menuButtons.transform, "スキップ: OFF", Vector2.zero);
@@ -1108,7 +1122,7 @@ public static class YobitsugiSceneBuilder
             20, TextAnchor.UpperLeft);
         var closeBacklogButton = CreateButton("CloseBacklogButton", backlogPanel.transform, "閉じる", Vector2.zero);
         AddRect(closeBacklogButton.gameObject, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f),
-            new Vector2(0f, 60f), new Vector2(220f, 56f));
+            new Vector2(0f, 70f), new Vector2(220f, 80f));
         backlogPanel.SetActive(false);
 
         var slotPanel = CreateFullScreenPanel("SlotPanel", canvasGO.transform, new Color(0f, 0f, 0f, 0.85f));
@@ -1119,7 +1133,7 @@ public static class YobitsugiSceneBuilder
         var slotList = CreateVerticalList("SlotButtons", slotPanel.transform, new Vector2(520f, 380f));
         var autoSlotButton = CreateButton("AutoSlotButton", slotList.transform, "オートセーブ: (空)", Vector2.zero);
         AddRect(autoSlotButton.gameObject, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-            Vector2.zero, new Vector2(460f, 56f));
+            Vector2.zero, new Vector2(460f, 80f));
         var autoSlotLabel = autoSlotButton.GetComponentInChildren<TMPro.TMP_Text>();
 
         var slotButtons = new Button[SaveSystem.SlotCount];
@@ -1128,7 +1142,7 @@ public static class YobitsugiSceneBuilder
         {
             var slotButton = CreateButton($"SlotButton_{i}", slotList.transform, $"スロット{i + 1}: (空)", Vector2.zero);
             AddRect(slotButton.gameObject, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                Vector2.zero, new Vector2(460f, 56f));
+                Vector2.zero, new Vector2(460f, 80f));
             slotButtons[i] = slotButton;
             slotLabels[i] = slotButton.GetComponentInChildren<TMPro.TMP_Text>();
         }
