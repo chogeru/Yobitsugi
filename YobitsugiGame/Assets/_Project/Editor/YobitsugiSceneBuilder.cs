@@ -457,15 +457,19 @@ public static class YobitsugiSceneBuilder
         var clueText = CreateText("ClueCounterText", canvasGO.transform, "手がかり: 0 / 3",
             new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(20f, -20f), new Vector2(320f, 40f),
             24, TextAnchor.UpperLeft);
+        clueText.fontStyle = TMPro.FontStyles.Bold;
+        clueText.color = new Color(0.91f, 0.76f, 0.44f, 1f);
 
         CreateText("Crosshair", canvasGO.transform, "・",
             new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(20f, 20f),
             28, TextAnchor.MiddleCenter);
 
         var promptPanel = CreateUIObject("InteractionPromptPanel", canvasGO.transform);
-        AddRect(promptPanel, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 90f), new Vector2(420f, 44f));
+        AddRect(promptPanel, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 90f), new Vector2(320f, 56f));
         var promptBg = promptPanel.AddComponent<Image>();
-        promptBg.color = new Color(0f, 0f, 0f, 0.55f);
+        promptBg.sprite = FindAsset<Sprite>("ui_panel");
+        promptBg.type = Image.Type.Simple;
+        promptBg.color = new Color(0f, 0f, 0f, 0.75f);
         var promptTextComp = CreateText("PromptText", promptPanel.transform, "調べる [E]",
             Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, 22, TextAnchor.MiddleCenter);
         promptPanel.SetActive(false);
