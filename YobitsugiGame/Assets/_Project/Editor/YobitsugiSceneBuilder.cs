@@ -185,8 +185,8 @@ public static class YobitsugiSceneBuilder
         root.transform.SetParent(levelRoot, false);
 
         BuildStreet(root.transform);
-        BuildBuildingRow(root.transform, "Houses_West", HouseSetRoot, WestHouses, -20f, 90f);
-        BuildBuildingRow(root.transform, "Shops_East", MallSetRoot, EastShops, 20f, -90f);
+        BuildBuildingRow(root.transform, "Houses_West", HouseSetRoot, WestHouses, WestHousesX, 90f);
+        BuildBuildingRow(root.transform, "Shops_East", MallSetRoot, EastShops, EastShopsX, -90f);
         BuildStreetProps(root.transform);
         BuildBoundary(root.transform);
 
@@ -204,7 +204,7 @@ public static class YobitsugiSceneBuilder
     {
         // Base ground under the whole footprint (including the strip between sidewalk and buildings,
         // which the modular road/sidewalk kit doesn't cover) so the player never walks off into void.
-        CreateGroundPlane("Ground", parent, new Vector3(0f, -0.05f, 11f), new Vector3(70f, 0.1f, 42f));
+        CreateGroundPlane("Ground", parent, new Vector3(0f, -0.05f, 11f), new Vector3(48f, 0.1f, 42f));
 
         string roadFolder = $"{StreetPackRoot}/RoadUnit/Prefabs/RoadUnit";
 
@@ -219,12 +219,16 @@ public static class YobitsugiSceneBuilder
         SpawnPrefab($"{roadFolder}/Sidewalk_Default_10m.prefab", parent, new Vector3(RoadHalfWidth, 0f, RoadSegmentBZ), -90f, "Sidewalk_East_B");
     }
 
-    // These building kits run 7-19m per side, so rows sit well clear of the sidewalk (x=+-20) with generous spacing.
+    // Each building kit's footprint differs wildly (7-19m), so unlike the road pieces these can't share one
+    // x-offset without leaving a gap in front of the shallow ones or clipping the sidewalk with the deep ones.
+    // x is pre-measured per model (facade edge sitting ~0.5m past the sidewalk's outer edge, at |x|=10).
     private static readonly string[] WestHouses = { "houseset01", "houseset04", "houseset07", "houseset10", "houseset13" };
+    private static readonly float[] WestHousesX = { -15.3f, -16.1f, -16.46f, -13.56f, -18.35f };
     private static readonly string[] EastShops = { "corner_shop_1", "tri_shop_1", "house_shop_01_1a", "building_middle_1", "ms_small_1" };
+    private static readonly float[] EastShopsX = { 16.42f, 16.05f, 15.82f, 16.63f, 13.0f };
 
     /// <summary>Places one building every 8m along z, starting at z=-4, facing the street (toward x=0).</summary>
-    private static void BuildBuildingRow(Transform parent, string groupName, string modelRoot, string[] fbxNames, float x, float facingRotY)
+    private static void BuildBuildingRow(Transform parent, string groupName, string modelRoot, string[] fbxNames, float[] xOffsets, float facingRotY)
     {
         var group = new GameObject(groupName);
         group.transform.SetParent(parent, false);
@@ -232,7 +236,7 @@ public static class YobitsugiSceneBuilder
         for (int i = 0; i < fbxNames.Length; i++)
         {
             float z = -4f + i * 8f;
-            SpawnPrefab($"{modelRoot}/{fbxNames[i]}.fbx", group.transform, new Vector3(x, 0f, z), facingRotY, fbxNames[i]);
+            SpawnPrefab($"{modelRoot}/{fbxNames[i]}.fbx", group.transform, new Vector3(xOffsets[i], 0f, z), facingRotY, fbxNames[i]);
         }
     }
 
@@ -265,10 +269,10 @@ public static class YobitsugiSceneBuilder
         var bounds = new GameObject("Boundary");
         bounds.transform.SetParent(parent, false);
 
-        CreateInvisibleWall("Boundary_North", bounds.transform, new Vector3(0f, 2f, 32.5f), new Vector3(70f, 4f, 0.3f));
-        CreateInvisibleWall("Boundary_South", bounds.transform, new Vector3(0f, 2f, -10.5f), new Vector3(70f, 4f, 0.3f));
-        CreateInvisibleWall("Boundary_West", bounds.transform, new Vector3(-35f, 2f, 11f), new Vector3(0.3f, 4f, 42f));
-        CreateInvisibleWall("Boundary_East", bounds.transform, new Vector3(35f, 2f, 11f), new Vector3(0.3f, 4f, 42f));
+        CreateInvisibleWall("Boundary_North", bounds.transform, new Vector3(0f, 2f, 32.5f), new Vector3(48f, 4f, 0.3f));
+        CreateInvisibleWall("Boundary_South", bounds.transform, new Vector3(0f, 2f, -10.5f), new Vector3(48f, 4f, 0.3f));
+        CreateInvisibleWall("Boundary_West", bounds.transform, new Vector3(-24f, 2f, 11f), new Vector3(0.3f, 4f, 42f));
+        CreateInvisibleWall("Boundary_East", bounds.transform, new Vector3(24f, 2f, 11f), new Vector3(0.3f, 4f, 42f));
 
         // Narrow gap at x=-1..1 forces the player through the LockedDoor, same as the old greybox layout.
         CreateInvisibleWall("Wall_Divide_Left", bounds.transform, new Vector3(-5.5f, 2f, 9f), new Vector3(9f, 4f, 0.3f));
@@ -444,7 +448,7 @@ public static class YobitsugiSceneBuilder
         var esGO = new GameObject("EventSystem");
         esGO.transform.SetParent(systemsRoot, false);
         esGO.AddComponent<EventSystem>();
-        esGO.AddComponent<InputSystemUIInputModule>();
+        WireUIInputModule(esGO.AddComponent<InputSystemUIInputModule>());
 
         var canvasGO = CreateCanvas("HUD Canvas", 0);
 
@@ -490,6 +494,32 @@ public static class YobitsugiSceneBuilder
 
         return canvasGO;
     }
+
+    /// <summary>Points the UI event system at the project's shared UI action map instead of Unity's separate built-in default.</summary>
+    private static void WireUIInputModule(InputSystemUIInputModule module)
+    {
+        var actions = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
+        var uiMap = actions != null ? actions.FindActionMap("UI") : null;
+        if (uiMap == null)
+        {
+            Debug.LogWarning($"No 'UI' action map found in {InputActionsPath}; InputSystemUIInputModule will use its built-in defaults.");
+            return;
+        }
+
+        module.actionsAsset = actions;
+        module.point = ToRef(uiMap.FindAction("Point"));
+        module.leftClick = ToRef(uiMap.FindAction("Click"));
+        module.middleClick = ToRef(uiMap.FindAction("MiddleClick"));
+        module.rightClick = ToRef(uiMap.FindAction("RightClick"));
+        module.scrollWheel = ToRef(uiMap.FindAction("ScrollWheel"));
+        module.submit = ToRef(uiMap.FindAction("Submit"));
+        module.cancel = ToRef(uiMap.FindAction("Cancel"));
+        module.trackedDeviceOrientation = ToRef(uiMap.FindAction("TrackedDeviceOrientation"));
+        module.trackedDevicePosition = ToRef(uiMap.FindAction("TrackedDevicePosition"));
+    }
+
+    private static InputActionReference ToRef(InputAction action) =>
+        action != null ? InputActionReference.Create(action) : null;
 
     private static GameObject CreateCanvas(string name, int sortingOrder)
     {
@@ -608,7 +638,9 @@ public static class YobitsugiSceneBuilder
         vnManagerSO.FindProperty("portraitView").objectReferenceValue = portraitView;
         vnManagerSO.ApplyModifiedPropertiesWithoutUndo();
 
-        var introScene = EnsureVNScene("Intro");
+        // "Intro" was a placeholder from before the CSV scenario pipeline existed; the real opening chapter
+        // (imported from Assets/_Project/Scenario/Ch00_Prologue.csv) is Ch00_Prologue.
+        var introScene = EnsureVNScene("Ch00_Prologue");
         var sakuScene = EnsureVNScene("SakuEncounter");
 
         var gameModeGO = new GameObject("GameModeManager");
@@ -641,6 +673,76 @@ public static class YobitsugiSceneBuilder
         BuildVNTrigger("VNTrigger_SakuEncounter", new Vector3(0f, 1.2f, 14f), new Vector3(6f, 3f, 3f), sakuScene);
         BuildSystemMenu(vnManager, gameMode, saveCoordinator);
         BuildScreenFader();
+        BuildTitleScreen(gameMode, saveCoordinator);
+    }
+
+    /// <summary>
+    /// The title screen shown at boot. TitleScreenController's mere presence tells GameModeManager to wait
+    /// for Start/Continue instead of auto-entering the intro (see GameModeManager.Start()).
+    /// </summary>
+    private static void BuildTitleScreen(GameModeManager gameMode, SaveCoordinator saveCoordinator)
+    {
+        var canvasGO = CreateCanvas("Title Canvas", 50);
+        canvasGO.AddComponent<CanvasGroup>();
+
+        var background = CreateUIObject("Background", canvasGO.transform);
+        AddRect(background, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        var bgImage = background.AddComponent<Image>();
+        bgImage.sprite = FindAsset<Sprite>("KeyVisual_Town");
+        bgImage.raycastTarget = false;
+        var aspectFitter = background.AddComponent<AspectRatioFitter>();
+        aspectFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+        aspectFitter.aspectRatio = 1.5f;
+
+        var content = CreateUIObject("Content", canvasGO.transform);
+        AddRect(content, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(90f, 0f), new Vector2(620f, 0f));
+
+        CreateText("TitleText", content.transform, "ヨビツギ",
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(0f, -140f), new Vector2(0f, 160f),
+            96, TextAnchor.UpperLeft);
+
+        var tagline = CreateText("Tagline", content.transform, "夕暮れで時間の止まった、無人の町。",
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(4f, -300f), new Vector2(0f, 80f),
+            28, TextAnchor.UpperLeft);
+        tagline.color = new Color(0.9098039f, 0.75686276f, 0.4392157f);
+
+        var buttonsGO = CreateUIObject("Buttons", content.transform);
+        AddRect(buttonsGO, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(4f, -430f), new Vector2(300f, 0f));
+        var layout = buttonsGO.AddComponent<VerticalLayoutGroup>();
+        layout.spacing = 16f;
+        layout.childAlignment = TextAnchor.UpperLeft;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+        layout.childControlWidth = true;
+        layout.childControlHeight = false;
+        buttonsGO.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        var buttonSprite = FindAsset<Sprite>("ui_button");
+        var startButton = CreateTitleButton("StartButton", buttonsGO.transform, "はじめる", buttonSprite);
+        var continueButton = CreateTitleButton("ContinueButton", buttonsGO.transform, "つづきから", buttonSprite);
+        var quitButton = CreateTitleButton("QuitButton", buttonsGO.transform, "終了", buttonSprite);
+
+        var controller = canvasGO.AddComponent<TitleScreenController>();
+        var so = new SerializedObject(controller);
+        so.FindProperty("startButton").objectReferenceValue = startButton;
+        so.FindProperty("continueButton").objectReferenceValue = continueButton;
+        so.FindProperty("quitButton").objectReferenceValue = quitButton;
+        so.FindProperty("gameModeManager").objectReferenceValue = gameMode;
+        so.FindProperty("saveCoordinator").objectReferenceValue = saveCoordinator;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static Button CreateTitleButton(string name, Transform parent, string label, Sprite sprite)
+    {
+        var go = CreateUIObject(name, parent);
+        AddRect(go, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 68f));
+        var img = go.AddComponent<Image>();
+        img.sprite = sprite;
+        img.type = Image.Type.Sliced;
+        var btn = go.AddComponent<Button>();
+        CreateText(name + "Label", go.transform, label, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
+            28, TextAnchor.MiddleCenter);
+        return btn;
     }
 
     private static GameObject ConstructVNCanvas()
@@ -683,10 +785,18 @@ public static class YobitsugiSceneBuilder
         textPanel.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.72f);
         var textPanelGroup = textPanel.AddComponent<CanvasGroup>();
 
+        var nameplateChip = CreateUIObject("NameplateChip", textPanel.transform);
+        AddRect(nameplateChip, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -8f), new Vector2(180f, 48f));
+        var nameplateImage = nameplateChip.AddComponent<Image>();
+        nameplateImage.sprite = FindAsset<Sprite>("ui_panel");
+        nameplateImage.type = Image.Type.Sliced;
+        nameplateImage.color = new Color(1f, 1f, 1f, 0.9f);
+
         var speakerText = CreateText("SpeakerText", textPanel.transform, "",
             new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(40f, -18f), new Vector2(-80f, 44f),
             30, TextAnchor.UpperLeft);
         speakerText.fontStyle = TMPro.FontStyles.Bold;
+        speakerText.color = Color.black;
 
         var dialogueText = CreateText("DialogueText", textPanel.transform, "",
             Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), new Vector2(0f, -22f), new Vector2(-80f, -76f),
@@ -799,7 +909,37 @@ public static class YobitsugiSceneBuilder
         so.FindProperty("ambienceSource").objectReferenceValue = ambience;
         so.FindProperty("sfxSource").objectReferenceValue = sfx;
         so.FindProperty("voiceSource").objectReferenceValue = voice;
+        so.FindProperty("titleMusic").objectReferenceValue = FindAsset<AudioClip>("internal monologue");
+        so.FindProperty("vnMusic").objectReferenceValue = FindAsset<AudioClip>("internal monologue");
+        so.FindProperty("explorationAmbience").objectReferenceValue = FindAsset<AudioClip>("echoes");
+        so.FindProperty("lineAdvanceClip").objectReferenceValue = FindAsset<AudioClip>("ui_button_simple_click_01");
+        so.FindProperty("clueClip").objectReferenceValue = FindAsset<AudioClip>("SFX_UI_Digital_MusicBox_Bells_Happy_Notification");
+        so.FindProperty("clearFanfareClip").objectReferenceValue = FindAsset<AudioClip>("SFX_UI_Confirmation_Choir_MajorChord_Reverb");
+        so.FindProperty("doorCloseClip").objectReferenceValue = FindAsset<AudioClip>("door_close_slam_slow_01");
+        so.FindProperty("doorOpenClip").objectReferenceValue = FindAsset<AudioClip>("door_A_creak_01");
+        so.FindProperty("modeTransitionWhoosh").objectReferenceValue = FindAsset<AudioClip>("whoosh_low_deep_soft_01");
+        so.FindProperty("saveClip").objectReferenceValue = FindAsset<AudioClip>("SFX_UI_Confirmation_Keys_Short_Simple");
+        so.FindProperty("uiClickClip").objectReferenceValue = FindAsset<AudioClip>("ui_menu_button_beep_01");
         so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    /// <summary>
+    /// Finds a project asset by name rather than a hardcoded path, so moving/reorganizing folders (as this
+    /// project's asset packs have been) doesn't silently null out references the next time the scene is rebuilt.
+    /// </summary>
+    private static T FindAsset<T>(string assetName) where T : Object
+    {
+        var guids = AssetDatabase.FindAssets($"{assetName} t:{typeof(T).Name}");
+        if (guids.Length == 0)
+        {
+            Debug.LogWarning($"Asset not found: {assetName} ({typeof(T).Name})");
+            return null;
+        }
+
+        if (guids.Length > 1)
+            Debug.LogWarning($"Multiple assets named '{assetName}' found; using the first match.");
+
+        return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guids[0]));
     }
 
     private static AudioSource CreateAudioSource(Transform parent, string name)
