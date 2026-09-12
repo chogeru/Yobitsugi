@@ -610,6 +610,55 @@ public static class YobitsugiSceneBuilder
         return btn;
     }
 
+    /// <summary>A "label ------O" row: left-aligned text plus a slider filling the rest of the row's width.</summary>
+    private static Slider CreateVolumeRow(string name, Transform parent, string label)
+    {
+        var row = CreateUIObject(name + "Row", parent);
+        AddRect(row, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(340f, 44f));
+
+        CreateText(name + "Label", row.transform, label,
+            new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(0f, 0f), new Vector2(90f, 0f),
+            22, TextAnchor.MiddleLeft);
+
+        var slider = CreateSlider(name, row.transform);
+        AddRect(slider.gameObject, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0f, 0.5f), new Vector2(100f, 0f), new Vector2(-100f, 20f));
+        return slider;
+    }
+
+    /// <summary>Builds a standard Background/Fill/Handle slider hierarchy (Unity's default UI Slider template).</summary>
+    private static Slider CreateSlider(string name, Transform parent)
+    {
+        var go = CreateUIObject(name, parent);
+        var slider = go.AddComponent<Slider>();
+
+        var background = CreateUIObject("Background", go.transform);
+        AddRect(background, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        background.AddComponent<Image>().color = new Color(1f, 1f, 1f, 0.2f);
+
+        var fillArea = CreateUIObject("Fill Area", go.transform);
+        AddRect(fillArea, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        var fill = CreateUIObject("Fill", fillArea.transform);
+        AddRect(fill, Vector2.zero, new Vector2(1f, 1f), new Vector2(0f, 0.5f), Vector2.zero, Vector2.zero);
+        var fillImage = fill.AddComponent<Image>();
+        fillImage.color = new Color(0.91f, 0.76f, 0.44f, 1f);
+
+        var handleArea = CreateUIObject("Handle Slide Area", go.transform);
+        AddRect(handleArea, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+        var handle = CreateUIObject("Handle", handleArea.transform);
+        AddRect(handle, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(18f, 18f));
+        var handleImage = handle.AddComponent<Image>();
+        handleImage.color = Color.white;
+
+        slider.targetGraphic = handleImage;
+        slider.fillRect = fill.GetComponent<RectTransform>();
+        slider.handleRect = handle.GetComponent<RectTransform>();
+        slider.direction = Slider.Direction.LeftToRight;
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value = 1f;
+        return slider;
+    }
+
     private static GameObject CreateVerticalList(string name, Transform parent, Vector2 size)
     {
         var go = CreateUIObject(name, parent);
@@ -1033,6 +1082,7 @@ public static class YobitsugiSceneBuilder
 
         var menuPanel = CreateFullScreenPanel("MenuPanel", canvasGO.transform, new Color(0f, 0f, 0f, 0.75f));
         var menuButtons = CreateVerticalList("Buttons", menuPanel.transform, new Vector2(360f, 460f));
+        menuButtons.GetComponent<RectTransform>().anchoredPosition = new Vector2(-200f, 0f);
         var autoButton = CreateButton("AutoButton", menuButtons.transform, "オート: OFF", Vector2.zero);
         var skipButton = CreateButton("SkipButton", menuButtons.transform, "スキップ: OFF", Vector2.zero);
         var logButton = CreateButton("LogButton", menuButtons.transform, "ログ", Vector2.zero);
@@ -1040,6 +1090,13 @@ public static class YobitsugiSceneBuilder
         var loadButton = CreateButton("LoadButton", menuButtons.transform, "ロード", Vector2.zero);
         var restartButton = CreateButton("RestartButton", menuButtons.transform, "最初から", Vector2.zero);
         var closeMenuButton = CreateButton("CloseButton", menuButtons.transform, "閉じる", Vector2.zero);
+
+        var volumeList = CreateVerticalList("VolumeControls", menuPanel.transform, new Vector2(360f, 200f));
+        volumeList.GetComponent<RectTransform>().anchoredPosition = new Vector2(220f, 0f);
+        var musicSlider = CreateVolumeRow("MusicVolumeSlider", volumeList.transform, "音楽");
+        var sfxSlider = CreateVolumeRow("SfxVolumeSlider", volumeList.transform, "効果音");
+        var voiceSlider = CreateVolumeRow("VoiceVolumeSlider", volumeList.transform, "ボイス");
+
         menuPanel.SetActive(false);
 
         var backlogPanel = CreateFullScreenPanel("BacklogPanel", canvasGO.transform, new Color(0f, 0f, 0f, 0.85f));
@@ -1056,7 +1113,12 @@ public static class YobitsugiSceneBuilder
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -70f), new Vector2(400f, 50f),
             28, TextAnchor.MiddleCenter);
 
-        var slotList = CreateVerticalList("SlotButtons", slotPanel.transform, new Vector2(520f, 320f));
+        var slotList = CreateVerticalList("SlotButtons", slotPanel.transform, new Vector2(520f, 380f));
+        var autoSlotButton = CreateButton("AutoSlotButton", slotList.transform, "オートセーブ: (空)", Vector2.zero);
+        AddRect(autoSlotButton.gameObject, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+            Vector2.zero, new Vector2(460f, 56f));
+        var autoSlotLabel = autoSlotButton.GetComponentInChildren<TMPro.TMP_Text>();
+
         var slotButtons = new Button[SaveSystem.SlotCount];
         var slotLabels = new TMPro.TMP_Text[SaveSystem.SlotCount];
         for (int i = 0; i < SaveSystem.SlotCount; i++)
@@ -1087,6 +1149,11 @@ public static class YobitsugiSceneBuilder
         so.FindProperty("backlogText").objectReferenceValue = backlogText;
         so.FindProperty("slotPanelTitle").objectReferenceValue = slotTitle;
         so.FindProperty("inputActions").objectReferenceValue = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
+        so.FindProperty("autoSlotButton").objectReferenceValue = autoSlotButton;
+        so.FindProperty("autoSlotButtonLabel").objectReferenceValue = autoSlotLabel;
+        so.FindProperty("musicVolumeSlider").objectReferenceValue = musicSlider;
+        so.FindProperty("sfxVolumeSlider").objectReferenceValue = sfxSlider;
+        so.FindProperty("voiceVolumeSlider").objectReferenceValue = voiceSlider;
 
         var backButtons = new[] { closeMenuButton, closeBacklogButton, closeSlotButton };
         var backButtonsProp = so.FindProperty("backButtons");
