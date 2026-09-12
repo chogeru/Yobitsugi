@@ -1128,7 +1128,9 @@ public static class YobitsugiSceneBuilder
         var slotPanel = CreateFullScreenPanel("SlotPanel", canvasGO.transform, new Color(0f, 0f, 0f, 0.85f));
         var slotTitle = CreateText("SlotPanelTitle", slotPanel.transform, "セーブ",
             new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -70f), new Vector2(400f, 50f),
-            28, TextAnchor.MiddleCenter);
+            32, TextAnchor.MiddleCenter);
+        slotTitle.fontStyle = TMPro.FontStyles.Bold;
+        slotTitle.color = new Color(0.91f, 0.76f, 0.44f, 1f);
 
         var slotList = CreateVerticalList("SlotButtons", slotPanel.transform, new Vector2(520f, 380f));
         var autoSlotButton = CreateButton("AutoSlotButton", slotList.transform, "オートセーブ: (空)", Vector2.zero);
