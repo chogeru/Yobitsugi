@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20460216418bad74db55b0c71db20a97, type: 3}
+  m_Name: Azusa
+  m_EditorClassIdentifier: Yobitsugi.Runtime::Yobitsugi.VisualNovel.CharacterDefinition
+  characterId: Azusa
+  displayName: Azusa
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  reactionVoice: 0
+  expressions:
+  - sprite: {fileID: 21300000, guid: 2f6b918d1b699944ab1912fbf1066351, type: 3}
+    key: normal
+  - sprite: {fileID: 21300000, guid: 41104d194f4c95445b3e992da40cfda5, type: 3}
+    key: smile
+  - sprite: {fileID: 21300000, guid: 7dc091f4dcb531e44a0933fa8ef9b97b, type: 3}
+    key: surprised
+  - sprite: {fileID: 21300000, guid: cc62fbdbfac3a5c40b45b65e2d647aad, type: 3}
+    key: worried
+  portraitScale: 1
+  portraitOffset: {x: 0, y: 0}

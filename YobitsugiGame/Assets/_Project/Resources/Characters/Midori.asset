@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20460216418bad74db55b0c71db20a97, type: 3}
+  m_Name: Midori
+  m_EditorClassIdentifier: Yobitsugi.Runtime::Yobitsugi.VisualNovel.CharacterDefinition
+  characterId: Midori
+  displayName: Midori
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  reactionVoice: 0
+  expressions:
+  - sprite: {fileID: 21300000, guid: e8a72579c9285d54c9006f076f2446f8, type: 3}
+    key: normal
+  - sprite: {fileID: 21300000, guid: 06166910301288e4e876f6e48d0bb178, type: 3}
+    key: smile
+  - sprite: {fileID: 21300000, guid: 1a278d16f03e5f340a1b407b5e27f210, type: 3}
+    key: surprised
+  - sprite: {fileID: 21300000, guid: cee5dae9ee62c19468b8c683ec53b2c5, type: 3}
+    key: worried
+  portraitScale: 1
+  portraitOffset: {x: 0, y: 0}

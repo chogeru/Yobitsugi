@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20460216418bad74db55b0c71db20a97, type: 3}
+  m_Name: Chika
+  m_EditorClassIdentifier: Yobitsugi.Runtime::Yobitsugi.VisualNovel.CharacterDefinition
+  characterId: Chika
+  displayName: Chika
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  reactionVoice: 0
+  expressions:
+  - sprite: {fileID: 21300000, guid: 8877a7ad37c1da944a3243c78ba9a17e, type: 3}
+    key: normal
+  - sprite: {fileID: 21300000, guid: ca91e882908c09d42ac21fa4061d0500, type: 3}
+    key: smile
+  - sprite: {fileID: 21300000, guid: 45dfb22e7900bb648ab8014f18a3e70f, type: 3}
+    key: surprised
+  - sprite: {fileID: 21300000, guid: 6c15513f6d899054e921286f67596397, type: 3}
+    key: worried
+  portraitScale: 1
+  portraitOffset: {x: 0, y: 0}

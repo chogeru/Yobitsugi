@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20460216418bad74db55b0c71db20a97, type: 3}
+  m_Name: Yori
+  m_EditorClassIdentifier: Yobitsugi.Runtime::Yobitsugi.VisualNovel.CharacterDefinition
+  characterId: Yori
+  displayName: Yori
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  reactionVoice: 0
+  expressions:
+  - sprite: {fileID: 21300000, guid: a6481ebab5fffa34e9c8c339b69ed9cd, type: 3}
+    key: normal
+  - sprite: {fileID: 21300000, guid: 69be24e3149a9be4090b09a45e41d39b, type: 3}
+    key: smile
+  - sprite: {fileID: 21300000, guid: 4b659d3e74968304aaf51f7e4a01f82b, type: 3}
+    key: surprised
+  - sprite: {fileID: 21300000, guid: 30a8bf27baceb1844b3bd2ca0930eb4c, type: 3}
+    key: worried
+  portraitScale: 1
+  portraitOffset: {x: 0, y: 0}

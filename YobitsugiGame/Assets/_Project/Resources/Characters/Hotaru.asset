@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20460216418bad74db55b0c71db20a97, type: 3}
+  m_Name: Hotaru
+  m_EditorClassIdentifier: Yobitsugi.Runtime::Yobitsugi.VisualNovel.CharacterDefinition
+  characterId: Hotaru
+  displayName: Hotaru
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  reactionVoice: 0
+  expressions:
+  - sprite: {fileID: 21300000, guid: a5ad1939b3055164f84664d8f958024e, type: 3}
+    key: normal
+  - sprite: {fileID: 21300000, guid: 6e03598f9a66092499edfa1dcd604aa2, type: 3}
+    key: smile
+  - sprite: {fileID: 21300000, guid: 7969c7d246ce12f44ad11fe02786a8d3, type: 3}
+    key: surprised
+  - sprite: {fileID: 21300000, guid: 47f4d04a4b284e646a9722f2220b2591, type: 3}
+    key: worried
+  portraitScale: 1
+  portraitOffset: {x: 0, y: 0}
