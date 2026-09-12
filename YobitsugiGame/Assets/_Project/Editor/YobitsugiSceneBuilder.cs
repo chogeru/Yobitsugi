@@ -25,6 +25,10 @@ public static class YobitsugiSceneBuilder
     private const string VolumeProfilePath = "Assets/_Project/Settings/YobitsugiVolumeProfile.asset";
     private const string PrefabFolder = "Assets/_Project/Prefabs";
     private const string UPixelatorPrefabPath = "Assets/ThirdParty/Abiogenesis3d/UPixelator/Prefabs/UPixelator.prefab";
+    private const string StreetPackRoot = "Assets/ThirdParty/TsubokuLab/Models/JapaneseStreetPack";
+    private const string BicyclePackRoot = "Assets/ThirdParty/TsubokuLab/Models/BicycleStoragePack";
+    private const string HouseSetRoot = "Assets/ThirdParty/BTA/HouseSet";
+    private const string MallSetRoot = "Assets/ThirdParty/BTA/MallSet";
     private const int RequiredClueCount = 3;
 
     private static Transform systemsRoot;
@@ -169,25 +173,109 @@ public static class YobitsugiSceneBuilder
         volume.sharedProfile = profile;
     }
 
+    /// <summary>
+    /// Shuttered shopping street: a straight two-lane road + sidewalks (JapaneseStreetPack) running from
+    /// the player's z=-6 start to the z=24 exit, flanked by BTA house/mall building rows and dressed with
+    /// streetlights, utility poles, a vending machine and a bicycle shed. Replaces the old greybox room.
+    /// Door/exit trigger colliders keep their original positions and sizing so clue/door/exit logic is untouched.
+    /// </summary>
     private static void BuildEnvironment()
     {
         var root = new GameObject("Environment");
         root.transform.SetParent(levelRoot, false);
 
-        CreateBlock("Floor", root.transform, new Vector3(0f, -0.1f, 9f), new Vector3(16f, 0.2f, 30f));
-        CreateBlock("Wall_North", root.transform, new Vector3(0f, 2f, 24f), new Vector3(16f, 4f, 0.3f));
-        CreateBlock("Wall_South", root.transform, new Vector3(0f, 2f, -6f), new Vector3(16f, 4f, 0.3f));
-        CreateBlock("Wall_East", root.transform, new Vector3(8f, 2f, 9f), new Vector3(0.3f, 4f, 30f));
-        CreateBlock("Wall_West", root.transform, new Vector3(-8f, 2f, 9f), new Vector3(0.3f, 4f, 30f));
-
-        CreateBlock("Wall_Divide_Left", root.transform, new Vector3(-4.5f, 2f, 9f), new Vector3(7f, 4f, 0.3f));
-        CreateBlock("Wall_Divide_Right", root.transform, new Vector3(4.5f, 2f, 9f), new Vector3(7f, 4f, 0.3f));
+        BuildStreet(root.transform);
+        BuildBuildingRow(root.transform, "Houses_West", HouseSetRoot, WestHouses, -20f, 90f);
+        BuildBuildingRow(root.transform, "Shops_East", MallSetRoot, EastShops, 20f, -90f);
+        BuildStreetProps(root.transform);
+        BuildBoundary(root.transform);
 
         BuildDoor(root.transform);
         BuildExit(root.transform);
     }
 
-    private static GameObject CreateBlock(string name, Transform parent, Vector3 position, Vector3 scale)
+    // z-centers for the two road/sidewalk segments that together span z -6..24
+    private const float RoadSegmentAZ = 4f;   // 20m segment, covers z -6..14
+    private const float RoadSegmentBZ = 19f;  // 10m segment, covers z 14..24
+    private const float RoadHalfWidth = 4f;
+    private const float SidewalkWidth = 6f;
+
+    private static void BuildStreet(Transform parent)
+    {
+        // Base ground under the whole footprint (including the strip between sidewalk and buildings,
+        // which the modular road/sidewalk kit doesn't cover) so the player never walks off into void.
+        CreateGroundPlane("Ground", parent, new Vector3(0f, -0.05f, 11f), new Vector3(70f, 0.1f, 42f));
+
+        string roadFolder = $"{StreetPackRoot}/RoadUnit/Prefabs/RoadUnit";
+
+        SpawnPrefab($"{roadFolder}/Road_TwoLane_20m.prefab", parent, new Vector3(0f, 0f, RoadSegmentAZ), 90f, "Road_A");
+        SpawnPrefab($"{roadFolder}/Road_TwoLane_10m.prefab", parent, new Vector3(0f, 0f, RoadSegmentBZ), 0f, "Road_B");
+
+        // Sidewalk pivots sit at their inner (road-facing) edge; rotating +90/-90 picks which side the
+        // 6m-wide walkway extends toward, so a single prefab pair covers both sides of the street.
+        SpawnPrefab($"{roadFolder}/Sidewalk_Default_20m.prefab", parent, new Vector3(-RoadHalfWidth, 0f, RoadSegmentAZ), 90f, "Sidewalk_West_A");
+        SpawnPrefab($"{roadFolder}/Sidewalk_Default_10m.prefab", parent, new Vector3(-RoadHalfWidth, 0f, RoadSegmentBZ), 90f, "Sidewalk_West_B");
+        SpawnPrefab($"{roadFolder}/Sidewalk_Default_20m.prefab", parent, new Vector3(RoadHalfWidth, 0f, RoadSegmentAZ), -90f, "Sidewalk_East_A");
+        SpawnPrefab($"{roadFolder}/Sidewalk_Default_10m.prefab", parent, new Vector3(RoadHalfWidth, 0f, RoadSegmentBZ), -90f, "Sidewalk_East_B");
+    }
+
+    // These building kits run 7-19m per side, so rows sit well clear of the sidewalk (x=+-20) with generous spacing.
+    private static readonly string[] WestHouses = { "houseset01", "houseset04", "houseset07", "houseset10", "houseset13" };
+    private static readonly string[] EastShops = { "corner_shop_1", "tri_shop_1", "house_shop_01_1a", "building_middle_1", "ms_small_1" };
+
+    /// <summary>Places one building every 8m along z, starting at z=-4, facing the street (toward x=0).</summary>
+    private static void BuildBuildingRow(Transform parent, string groupName, string modelRoot, string[] fbxNames, float x, float facingRotY)
+    {
+        var group = new GameObject(groupName);
+        group.transform.SetParent(parent, false);
+
+        for (int i = 0; i < fbxNames.Length; i++)
+        {
+            float z = -4f + i * 8f;
+            SpawnPrefab($"{modelRoot}/{fbxNames[i]}.fbx", group.transform, new Vector3(x, 0f, z), facingRotY, fbxNames[i]);
+        }
+    }
+
+    private static void BuildStreetProps(Transform parent)
+    {
+        var props = new GameObject("StreetProps");
+        props.transform.SetParent(parent, false);
+
+        string streetLight = $"{StreetPackRoot}/StreetLight/Prefabs/StreetLightPrefab.prefab";
+        for (int i = 0; i < 4; i++)
+        {
+            float z = -4f + i * 8f;
+            SpawnPrefab(streetLight, props.transform, new Vector3(-RoadHalfWidth - 0.3f, 0f, z), 0f, $"StreetLight_W_{i}");
+            SpawnPrefab(streetLight, props.transform, new Vector3(RoadHalfWidth + 0.3f, 0f, z + 4f), 180f, $"StreetLight_E_{i}");
+        }
+
+        SpawnPrefab($"{StreetPackRoot}/UtilityPole/Prefabs/UtilityPolePrefab.prefab", props.transform,
+            new Vector3(-RoadHalfWidth - SidewalkWidth + 0.5f, 0f, 12f), 0f, "UtilityPole");
+
+        SpawnPrefab($"{StreetPackRoot}/VendingMachine/Prefabs/VendingMachinePrefab.prefab", props.transform,
+            new Vector3(RoadHalfWidth + 0.6f, 0f, -4.5f), -90f, "VendingMachine");
+
+        SpawnPrefab($"{BicyclePackRoot}/Prefabs/BicycleStoragePrefab_withBicycles.prefab", props.transform,
+            new Vector3(-RoadHalfWidth - 1.5f, 0f, -4.5f), 90f, "BicycleStorage");
+    }
+
+    /// <summary>Invisible colliders (no renderer) at the outer edge of the buildings, keeping the player on the street.</summary>
+    private static void BuildBoundary(Transform parent)
+    {
+        var bounds = new GameObject("Boundary");
+        bounds.transform.SetParent(parent, false);
+
+        CreateInvisibleWall("Boundary_North", bounds.transform, new Vector3(0f, 2f, 32.5f), new Vector3(70f, 4f, 0.3f));
+        CreateInvisibleWall("Boundary_South", bounds.transform, new Vector3(0f, 2f, -10.5f), new Vector3(70f, 4f, 0.3f));
+        CreateInvisibleWall("Boundary_West", bounds.transform, new Vector3(-35f, 2f, 11f), new Vector3(0.3f, 4f, 42f));
+        CreateInvisibleWall("Boundary_East", bounds.transform, new Vector3(35f, 2f, 11f), new Vector3(0.3f, 4f, 42f));
+
+        // Narrow gap at x=-1..1 forces the player through the LockedDoor, same as the old greybox layout.
+        CreateInvisibleWall("Wall_Divide_Left", bounds.transform, new Vector3(-5.5f, 2f, 9f), new Vector3(9f, 4f, 0.3f));
+        CreateInvisibleWall("Wall_Divide_Right", bounds.transform, new Vector3(5.5f, 2f, 9f), new Vector3(9f, 4f, 0.3f));
+    }
+
+    private static GameObject CreateGroundPlane(string name, Transform parent, Vector3 position, Vector3 scale)
     {
         var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
         go.name = name;
@@ -195,7 +283,51 @@ public static class YobitsugiSceneBuilder
         go.transform.position = position;
         go.transform.localScale = scale;
         GameObjectUtility.SetStaticEditorFlags(go, StaticEditorFlags.ContributeGI);
+        go.GetComponent<MeshRenderer>().sharedMaterial = GetSimpleMaterial("Ground_Dirt", new Color(0.22f, 0.2f, 0.17f));
         return go;
+    }
+
+    /// <summary>
+    /// CreatePrimitive's default material has no URP-compatible shader and renders magenta in this project,
+    /// so any primitive left visible (ground, door panel, clue markers) needs an explicit URP/Lit material.
+    /// </summary>
+    private static Material GetSimpleMaterial(string name, Color color)
+    {
+        string path = $"Assets/_Project/Art/Materials/{name}.mat";
+        var existing = AssetDatabase.LoadAssetAtPath<Material>(path);
+        if (existing != null) return existing;
+
+        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+        var mat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = color };
+        AssetDatabase.CreateAsset(mat, path);
+        return mat;
+    }
+
+    private static GameObject CreateInvisibleWall(string name, Transform parent, Vector3 position, Vector3 scale)
+    {
+        var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        go.name = name;
+        go.transform.SetParent(parent, false);
+        go.transform.position = position;
+        go.transform.localScale = scale;
+        Object.DestroyImmediate(go.GetComponent<MeshRenderer>());
+        return go;
+    }
+
+    /// <summary>Instantiates a prefab or raw model asset as a linked prefab instance, keeping hand-tuning on rebuild.</summary>
+    private static GameObject SpawnPrefab(string assetPath, Transform parent, Vector3 position, float rotationY, string name)
+    {
+        var asset = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+        if (asset == null)
+        {
+            Debug.LogWarning($"Environment asset not found: {assetPath}");
+            return null;
+        }
+
+        var instance = (GameObject)PrefabUtility.InstantiatePrefab(asset, parent);
+        instance.name = name;
+        instance.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, rotationY, 0f));
+        return instance;
     }
 
     private static void BuildDoor(Transform parent)
@@ -209,6 +341,7 @@ public static class YobitsugiSceneBuilder
         doorPanel.transform.SetParent(hinge.transform, false);
         doorPanel.transform.localPosition = new Vector3(1f, 2f, 0f);
         doorPanel.transform.localScale = new Vector3(2f, 4f, 0.15f);
+        doorPanel.GetComponent<MeshRenderer>().sharedMaterial = GetSimpleMaterial("Door_Shutter", new Color(0.5f, 0.45f, 0.1f));
 
         var door = hinge.AddComponent<LockedDoor>();
         var so = new SerializedObject(door);
@@ -290,6 +423,7 @@ public static class YobitsugiSceneBuilder
         go.transform.SetParent(parent, false);
         go.transform.position = position;
         go.transform.localScale = Vector3.one * 0.35f;
+        go.GetComponent<MeshRenderer>().sharedMaterial = GetSimpleMaterial("Clue_Marker", new Color(0.85f, 0.7f, 0.2f));
 
         var clue = go.AddComponent<ClueItem>();
         var so = new SerializedObject(clue);
