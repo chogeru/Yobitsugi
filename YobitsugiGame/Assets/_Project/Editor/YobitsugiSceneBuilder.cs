@@ -29,7 +29,7 @@ public static class YobitsugiSceneBuilder
     private const string BicyclePackRoot = "Assets/ThirdParty/TsubokuLab/Models/BicycleStoragePack";
     private const string HouseSetRoot = "Assets/ThirdParty/BTA/HouseSet";
     private const string MallSetRoot = "Assets/ThirdParty/BTA/MallSet";
-    private const int RequiredClueCount = 3;
+    private const int RequiredClueCount = 5;
 
     private static Transform systemsRoot;
     private static Transform uiRoot;
@@ -418,6 +418,8 @@ public static class YobitsugiSceneBuilder
         CreateClue(root.transform, "Clue_01", new Vector3(-5f, 0.5f, -3f));
         CreateClue(root.transform, "Clue_02", new Vector3(5f, 0.5f, -1f));
         CreateClue(root.transform, "Clue_03", new Vector3(-3f, 0.5f, 5f));
+        CreateClue(root.transform, "Clue_04", new Vector3(6f, 0.5f, 18f));
+        CreateClue(root.transform, "Clue_05", new Vector3(7f, 0.5f, 7f));
     }
 
     private static void CreateClue(Transform parent, string id, Vector3 position)
