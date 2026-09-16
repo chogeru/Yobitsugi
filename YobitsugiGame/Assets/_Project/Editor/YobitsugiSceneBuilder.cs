@@ -31,6 +31,9 @@ public static class YobitsugiSceneBuilder
     private const string MallSetRoot = "Assets/ThirdParty/BTA/MallSet";
     private const int RequiredClueCount = 5;
 
+    /// <summary>The accent running through the whole UI: the gold of a kintsugi seam.</summary>
+    private static readonly Color Gold = new Color(0.91f, 0.76f, 0.44f, 1f);
+
     private static Transform systemsRoot;
     private static Transform uiRoot;
     private static Transform levelRoot;
@@ -454,8 +457,21 @@ public static class YobitsugiSceneBuilder
 
         var canvasGO = CreateCanvas("HUD Canvas", 0);
 
+        // Edge darkening over the exploration view. First child, so every other HUD element draws on top of it.
+        var vignette = CreateFullScreenPanel("Vignette", canvasGO.transform, Color.white);
+        var vignetteImage = vignette.GetComponent<Image>();
+        vignetteImage.sprite = FindAsset<Sprite>("ui_vignette");
+        vignetteImage.raycastTarget = false;
+
+        var clueIcon = CreateUIObject("ClueIcon", canvasGO.transform);
+        AddRect(clueIcon, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(20f, -22f), new Vector2(26f, 26f));
+        var clueIconImage = clueIcon.AddComponent<Image>();
+        clueIconImage.sprite = FindAsset<Sprite>("ui_icon_clue");
+        clueIconImage.color = new Color(0.91f, 0.76f, 0.44f, 1f);
+        clueIconImage.raycastTarget = false;
+
         var clueText = CreateText("ClueCounterText", canvasGO.transform, "手がかり: 0 / 3",
-            new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(20f, -20f), new Vector2(320f, 40f),
+            new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(54f, -20f), new Vector2(320f, 40f),
             24, TextAnchor.UpperLeft);
         clueText.fontStyle = TMPro.FontStyles.Bold;
         clueText.color = new Color(0.91f, 0.76f, 0.44f, 1f);
@@ -760,22 +776,56 @@ public static class YobitsugiSceneBuilder
         aspectFitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
         aspectFitter.aspectRatio = 1.5f;
 
+        // The key visual runs edge to edge behind the menu, so the left third gets a gradient to sit the
+        // title, tagline and buttons on. Without it the text competes with whatever the art puts there.
+        var scrim = CreateUIObject("Scrim", canvasGO.transform);
+        AddRect(scrim, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), Vector2.zero, new Vector2(900f, 0f));
+        var scrimImage = scrim.AddComponent<Image>();
+        scrimImage.sprite = FindAsset<Sprite>("ui_scrim_left");
+        scrimImage.raycastTarget = false;
+
+        // A gold hairline down the left margin, holding the title block together as one column.
+        // (A literal kintsugi crack was tried here first and read as a branch lying across the street.)
+        var seam = CreateUIObject("Seam", canvasGO.transform);
+        AddRect(seam, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0.5f, 0.5f), new Vector2(58f, -480f), new Vector2(540f, 2f));
+        seam.GetComponent<RectTransform>().localEulerAngles = new Vector3(0f, 0f, 90f);
+        var seamImage = seam.AddComponent<Image>();
+        seamImage.sprite = FindAsset<Sprite>("ui_divider");
+        seamImage.color = new Color(Gold.r, Gold.g, Gold.b, 0.45f);
+        seamImage.raycastTarget = false;
+
         var content = CreateUIObject("Content", canvasGO.transform);
         AddRect(content, new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 0.5f), new Vector2(90f, 0f), new Vector2(620f, 0f));
 
-        CreateText("TitleText", content.transform, "ヨビツギ",
-            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(0f, -140f), new Vector2(0f, 160f),
-            96, TextAnchor.UpperLeft);
+        var titleText = CreateText("TitleText", content.transform, "ヨビツギ",
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(0f, -230f), new Vector2(0f, 150f),
+            104, TextAnchor.UpperLeft);
+        titleText.characterSpacing = 14f;
+        titleText.color = new Color(0.96f, 0.95f, 0.92f, 1f);
+
+        var romaji = CreateText("TitleRomaji", content.transform, "YOBITSUGI",
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(6f, -390f), new Vector2(0f, 30f),
+            18, TextAnchor.UpperLeft);
+        romaji.characterSpacing = 22f;
+        romaji.color = new Color(Gold.r, Gold.g, Gold.b, 0.85f);
+
+        var titleRule = CreateUIObject("TitleRule", content.transform);
+        AddRect(titleRule, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(4f, -430f), new Vector2(460f, 2f));
+        var titleRuleImage = titleRule.AddComponent<Image>();
+        titleRuleImage.sprite = FindAsset<Sprite>("ui_divider");
+        titleRuleImage.color = new Color(Gold.r, Gold.g, Gold.b, 0.7f);
+        titleRuleImage.raycastTarget = false;
 
         var tagline = CreateText("Tagline", content.transform, "夕暮れで時間の止まった、無人の町。",
-            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(4f, -300f), new Vector2(0f, 80f),
-            28, TextAnchor.UpperLeft);
-        tagline.color = new Color(0.9098039f, 0.75686276f, 0.4392157f);
+            new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(4f, -452f), new Vector2(0f, 40f),
+            22, TextAnchor.UpperLeft);
+        tagline.characterSpacing = 4f;
+        tagline.color = new Color(0.82f, 0.80f, 0.78f, 1f);
 
         var buttonsGO = CreateUIObject("Buttons", content.transform);
-        AddRect(buttonsGO, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(4f, -430f), new Vector2(300f, 0f));
+        AddRect(buttonsGO, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(4f, -560f), new Vector2(380f, 0f));
         var layout = buttonsGO.AddComponent<VerticalLayoutGroup>();
-        layout.spacing = 16f;
+        layout.spacing = 6f;
         layout.childAlignment = TextAnchor.UpperLeft;
         layout.childForceExpandWidth = true;
         layout.childForceExpandHeight = false;
@@ -783,10 +833,9 @@ public static class YobitsugiSceneBuilder
         layout.childControlHeight = false;
         buttonsGO.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        var buttonSprite = FindAsset<Sprite>("ui_button");
-        var startButton = CreateTitleButton("StartButton", buttonsGO.transform, "はじめる", buttonSprite);
-        var continueButton = CreateTitleButton("ContinueButton", buttonsGO.transform, "つづきから", buttonSprite);
-        var quitButton = CreateTitleButton("QuitButton", buttonsGO.transform, "終了", buttonSprite);
+        var startButton = CreateTitleMenuItem("StartButton", buttonsGO.transform, "はじめる");
+        var continueButton = CreateTitleMenuItem("ContinueButton", buttonsGO.transform, "つづきから");
+        var quitButton = CreateTitleMenuItem("QuitButton", buttonsGO.transform, "終了");
 
         var controller = canvasGO.AddComponent<TitleScreenController>();
         var so = new SerializedObject(controller);
@@ -798,17 +847,52 @@ public static class YobitsugiSceneBuilder
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
-    private static Button CreateTitleButton(string name, Transform parent, string label, Sprite sprite)
+    /// <summary>
+    /// One row of the title menu: a gold caret, a left-aligned label and a hairline rule under it.
+    /// The Button tints the label instead of a background plate, so hovering reads as the word turning
+    /// gold, and "つづきから" greys out on its own when there is no save to continue.
+    /// </summary>
+    private static Button CreateTitleMenuItem(string name, Transform parent, string label)
     {
         var go = CreateUIObject(name, parent);
-        // ui_button's 36px border on each side needs at least ~72px of height to slice cleanly.
-        AddRect(go, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 80f));
-        var img = go.AddComponent<Image>();
-        img.sprite = sprite;
-        img.type = Image.Type.Sliced;
+        AddRect(go, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(0f, 56f));
+        // Invisible, but still the row's hit box: a fully transparent Image is only skipped by raycasts
+        // when an alpha threshold asks for it, which is exactly the behaviour wanted here.
+        var hit = go.AddComponent<Image>();
+        hit.color = new Color(1f, 1f, 1f, 0f);
+
+        var caret = CreateUIObject(name + "Caret", go.transform);
+        AddRect(caret, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(0f, 0f), new Vector2(12f, 12f));
+        var caretImage = caret.AddComponent<Image>();
+        caretImage.sprite = FindAsset<Sprite>("ui_choice_caret");
+        caretImage.color = new Color(Gold.r, Gold.g, Gold.b, 0.5f);
+        caretImage.raycastTarget = false;
+
+        var text = CreateText(name + "Label", go.transform, label,
+            Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), new Vector2(16f, 0f), new Vector2(-32f, 0f),
+            26, TextAnchor.MiddleLeft);
+        text.characterSpacing = 8f;
+        text.raycastTarget = false;
+
+        var rule = CreateUIObject(name + "Rule", go.transform);
+        AddRect(rule, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f), Vector2.zero, new Vector2(0f, 1f));
+        var ruleImage = rule.AddComponent<Image>();
+        ruleImage.sprite = FindAsset<Sprite>("ui_divider");
+        ruleImage.color = new Color(1f, 1f, 1f, 0.16f);
+        ruleImage.raycastTarget = false;
+
         var btn = go.AddComponent<Button>();
-        CreateText(name + "Label", go.transform, label, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero,
-            28, TextAnchor.MiddleCenter);
+        btn.targetGraphic = text;
+        var colors = btn.colors;
+        // The label's own colour stays white so these tints land exactly as written.
+        colors.normalColor = new Color(0.88f, 0.87f, 0.84f, 1f);
+        colors.highlightedColor = new Color(0.96f, 0.80f, 0.48f, 1f);
+        colors.pressedColor = new Color(1f, 0.92f, 0.72f, 1f);
+        // Selected matches highlighted so pad/keyboard navigation shows which row is focused.
+        colors.selectedColor = colors.highlightedColor;
+        colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.55f);
+        colors.fadeDuration = 0.14f;
+        btn.colors = colors;
         return btn;
     }
 
@@ -1094,7 +1178,7 @@ public static class YobitsugiSceneBuilder
     {
         var canvasGO = CreateCanvas("System Menu Canvas", 20);
 
-        var menuButton = CreateButton("MenuButton", canvasGO.transform, "≡", Vector2.zero);
+        var menuButton = CreateButton("MenuButton", canvasGO.transform, "", Vector2.zero);
         AddRect(menuButton.gameObject, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(1f, 1f),
             new Vector2(-16f, -16f), new Vector2(56f, 56f));
         // Small square icon button: too small to slice ui_button cleanly, so fall back to a flat tint.
@@ -1102,6 +1186,14 @@ public static class YobitsugiSceneBuilder
         menuButtonImage.sprite = null;
         menuButtonImage.type = Image.Type.Simple;
         menuButtonImage.color = new Color(1f, 1f, 1f, 0.15f);
+
+        // The label is an icon rather than a "≡" glyph: the glyph's size and baseline vary by font, and the
+        // Japanese font this project falls back to centres it badly in a 56px square.
+        var menuIcon = CreateUIObject("MenuIcon", menuButton.transform);
+        AddRect(menuIcon, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(28f, 28f));
+        var menuIconImage = menuIcon.AddComponent<Image>();
+        menuIconImage.sprite = FindAsset<Sprite>("ui_icon_menu");
+        menuIconImage.raycastTarget = false;
 
         var menuPanel = CreateFullScreenPanel("MenuPanel", canvasGO.transform, new Color(0f, 0f, 0f, 0.75f));
         var menuButtons = CreateVerticalList("Buttons", menuPanel.transform, new Vector2(360f, 620f));
